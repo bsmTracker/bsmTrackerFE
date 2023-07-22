@@ -4,7 +4,7 @@ export const CreateIcon = ({ onClick }: { onClick?: any }) => {
   return (
     <Image
       alt="add"
-      src="http://localhost:8000/add.svg"
+      src={`${process.env.NEXT_PUBLIC_SERVER_URL}/add.svg`}
       className="cursor-pointer"
       width={30}
       height={30}

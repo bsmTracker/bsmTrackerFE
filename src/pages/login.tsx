@@ -1,26 +1,23 @@
 import { UserLoginDto } from "@/types/user";
-import axios from "../axios";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useLoginMutation } from "@/query/user";
 
 const Login = () => {
   const router = useRouter();
 
-  const {
-    handleSubmit,
-    register,
-    formState: { errors },
-  } = useForm<UserLoginDto>();
+  const { handleSubmit, register } = useForm<UserLoginDto>();
+
+  const loginMutation = useLoginMutation();
 
   const onSubmit = async (data: UserLoginDto) => {
-    try {
-      await axios.post("/api/oauth/login", data);
-      router.replace("/");
-    } catch (e: any) {
-      toast(e.response.data.message);
-    }
+    await loginMutation.mutateAsync(data, {
+      onSuccess: () => {
+        router.push("/");
+      },
+    });
   };
 
   return (

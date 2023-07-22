@@ -1,4 +1,3 @@
-import { Auth } from "@/hoc/auth";
 import { useMemo, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {
@@ -16,9 +15,13 @@ import { TimeSelect } from "@/Components/PlaySchedule/TimeSelect";
 import { MelodyCo } from "@/Components/PlaySchedule/MelodyCo";
 import { TTSCo } from "@/Components/PlaySchedule/TtsCo";
 import { PlaylistSelect } from "@/Components/PlaySchedule/PlaylistSelect";
-import { useMutation, useQueryClient } from "react-query";
-import axios from "../../axios";
 import { toast } from "react-toastify";
+
+import {
+  useAddPlayScheduleMutation,
+  useDeletePlayScheduleMutation,
+  useEditPlayScheduleMutation,
+} from "@/query/playSchedule";
 
 export const AddEditPlayScheduleModal = ({
   closeModal,
@@ -32,6 +35,7 @@ export const AddEditPlayScheduleModal = ({
   const [scheduleType, setScheduleType] = useState(
     playSchedule?.scheduleType || ScheduleEnum.EVENT
   );
+
   const [daysOfWeek, setDaysOfWeek] = useState(playSchedule?.daysOfWeek || [1]);
   const [startDateStr, setStartDateStr] = useState(
     playSchedule?.startDate || "2023-08-01"
@@ -53,49 +57,27 @@ export const AddEditPlayScheduleModal = ({
       second: 0,
     }
   );
+
   const [scheduleName, setScheduleName] = useState(playSchedule?.name || "");
   const [melody, setMelody] = useState<Audio | null>(
     playSchedule?.startMelody || null
   );
+
   const [tts, setTts] = useState<Tts | null>(playSchedule?.tts || null);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(
     playSchedule?.playlist || null
   );
 
   const [volume, setVolume] = useState(playSchedule?.volume || 25);
-  const queryClient = useQueryClient();
-  const addEditMutation = useMutation(
-    (data: any) => {
-      if (playSchedule && type == "put") {
-        return axios.put(`/api/play-schedule/${playSchedule?.id}`, data);
-      } else {
-        return axios.post(`/api/play-schedule`, data);
-      }
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["playSchedule", "list"]);
-        closeModal();
-      },
-      onError: (e: any) => {
-        toast(e.response.data.message);
-      },
-    }
+
+  const addPlayScheduleMutation = useAddPlayScheduleMutation();
+  const editPlayScheduleMutation = useEditPlayScheduleMutation(
+    playSchedule?.id
   );
 
-  const deleteMutation = useMutation(
-    () => {
-      return axios.delete(`/api/play-schedule/${playSchedule?.id}`);
-    },
-    {
-      onSuccess: () => {
-        queryClient.refetchQueries(["playSchedule", "list"]);
-        closeModal();
-      },
-    }
-  );
+  const deleteMutation = useDeletePlayScheduleMutation(playSchedule?.id);
 
-  const submit = () => {
+  const submit = async () => {
     const scheduleData: PlayScheduleDto = {
       name: scheduleName,
       scheduleType,
@@ -137,11 +119,12 @@ export const AddEditPlayScheduleModal = ({
         return;
       }
     }
-    addEditMutation.mutate(scheduleData);
-  };
-
-  const deleteHandler = () => {
-    deleteMutation.mutate();
+    if (playSchedule && type == "put") {
+      await editPlayScheduleMutation.mutateAsync(scheduleData);
+    } else {
+      await addPlayScheduleMutation.mutateAsync(scheduleData);
+    }
+    closeModal();
   };
 
   const scheduleSelect = useMemo(
@@ -226,7 +209,10 @@ export const AddEditPlayScheduleModal = ({
         </button>
         {type == "put" && (
           <button
-            onClick={deleteHandler}
+            onClick={async () => {
+              await deleteMutation.mutateAsync();
+              closeModal();
+            }}
             className="bg-black text-white p-2 w-[150px]  text-[30px]"
           >
             삭제
@@ -243,4 +229,4 @@ export const AddEditPlayScheduleModal = ({
   );
 };
 
-export default Auth(AddEditPlayScheduleModal);
+export default AddEditPlayScheduleModal;

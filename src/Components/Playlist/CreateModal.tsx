@@ -1,18 +1,9 @@
-import { useMutation, useQueryClient } from "react-query";
-import axios from "../../axios";
 import { useState } from "react";
+import { useAddPlaylistMutation } from "@/query/playlist";
 
 export const CreatePlaylistModal = ({ closeModal }: { closeModal?: any }) => {
   const [name, setName] = useState("");
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationKey: ["playlist"],
-    mutationFn: (data: { name: string }) => axios.post("/api/playlist", data),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(["playlist", "list"]);
-      closeModal();
-    },
-  });
+  const addPlaylistMutation = useAddPlaylistMutation();
 
   return (
     <div className="bg-white p-[50px] flex flex-col justify-center items-center gap-3">
@@ -27,10 +18,11 @@ export const CreatePlaylistModal = ({ closeModal }: { closeModal?: any }) => {
       </div>
       <div className="flex flex-row gap-3">
         <button
-          onClick={() => {
-            mutation.mutateAsync({
+          onClick={async () => {
+            await addPlaylistMutation.mutateAsync({
               name,
             });
+            closeModal();
           }}
           className="bg-black text-white p-2 w-[150px]  text-[30px]"
         >

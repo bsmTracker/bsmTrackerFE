@@ -1,14 +1,10 @@
-import Image from "next/image";
-import { useMutation } from "react-query";
-import axios from "../../axios";
 import { useState } from "react";
 import { Tts } from "@/types/tts";
 import { DeleteIcon } from "../Icon/DeleteIcon";
+import { useAddTtsMutation } from "@/query/tts";
 
 export const TTSCo = ({ setTTS, tts }: { setTTS: any; tts?: Tts | null }) => {
-  const mutation = useMutation((data: { tts: string }) =>
-    axios.post(`/api/tts`, data)
-  );
+  const addTtsMutation = useAddTtsMutation();
 
   const [content, setContent] = useState(tts?.content ?? "");
 
@@ -24,16 +20,16 @@ export const TTSCo = ({ setTTS, tts }: { setTTS: any; tts?: Tts | null }) => {
             onChange={(e: any) => setContent(e.target.value)}
           />
           <button
-            onClick={() => {
+            onClick={async () => {
               if (!content) {
                 return;
               }
-              mutation.mutate(
+              await addTtsMutation.mutateAsync(
                 {
                   tts: content,
                 },
                 {
-                  onSuccess: ({ data }) => {
+                  onSuccess: (data: Tts) => {
                     setTTS(data);
                   },
                 }

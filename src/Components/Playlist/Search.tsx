@@ -1,12 +1,10 @@
-import axios from "../../axios";
 import { useEffect, useMemo, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import qs from "qs";
 import { SearchedTrack as SearchedTrackType } from "@/types/track";
 import { debounce as _debounce } from "lodash";
 import SearchedTrack from "./SearchedTrack";
 import { Modal } from "@mui/material";
-import { toast } from "react-toastify";
+import { useSearchTrackQuery } from "@/query/playlist";
+import { useSaveTrackMutation } from "@/query/track";
 
 const SearchTrack = ({
   playlistId,
@@ -22,37 +20,17 @@ const SearchTrack = ({
     null
   );
 
-  const queryClient = useQueryClient();
+  const searchTrackQuery = useSearchTrackQuery(playlistId, keyword);
+  const saveTrackMutation = useSaveTrackMutation(playlistId);
 
-  const searchQuery = useQuery({
-    queryKey: ["playlist", playlistId, "search", keyword],
-    queryFn: () => {
-      const queryStr = qs.stringify({
-        q: keyword,
-        playlistId,
-      });
-      return axios.get(`/api/track/search?${queryStr}`).then((res) => res.data);
-    },
-  });
+  useEffect(() => {
+    searchTrackQuery.refetch();
+  }, [keyword]);
 
-  const searchedTracks: SearchedTrackType[] = useMemo(() => {
-    if (searchQuery.isLoading) return [];
-    return searchQuery.data;
-  }, [searchQuery.isLoading, selectedTrack]);
-
-  const saveMutation: any = useMutation({
-    mutationKey: ["playlist", "save", playlistId],
-    mutationFn: (code: string) =>
-      axios
-        .post("/api/track/save", {
-          playlistId,
-          code,
-        })
-        .then((res) => res.data),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(["playlist", playlistId]);
-    },
-  });
+  const searchedTracks = useMemo(() => {
+    if (searchTrackQuery.isLoading) return [];
+    return searchTrackQuery.data;
+  }, [searchTrackQuery.data, selectedTrack]);
 
   useEffect(() => {
     if (keywordTimeout) clearTimeout(keywordTimeout);
@@ -77,45 +55,43 @@ const SearchTrack = ({
         />
         <button
           onClick={() => {
-            searchQuery.refetch();
+            searchTrackQuery.refetch();
           }}
           className="w-[50px] h-full bg-black text-white"
         >
           검색
         </button>
       </div>
-      {searchQuery.isLoading && <p>로딩중</p>}
+      {searchTrackQuery.isLoading && <p>로딩중</p>}
       <div className="overflow-y-scroll h-[300px] py-[5px] my-[30px] flex flex-col gap-3">
-        {searchedTracks.map((searchedTrack: SearchedTrackType, idx: number) => {
-          return (
-            <div
-              key={searchedTrack.code}
-              onClick={() => {
-                if (selectedTrack?.code === searchedTrack.code) {
-                  setSelectedTrack(null);
-                } else {
-                  setSelectedTrack(searchedTrack);
-                }
-              }}
-            >
-              <SearchedTrack
-                searchedTrack={searchedTrack}
-                selected={selectedTrack?.code === searchedTrack.code}
-              />
-            </div>
-          );
-        })}
+        {searchedTracks?.map(
+          (searchedTrack: SearchedTrackType, idx: number) => {
+            return (
+              <div
+                key={searchedTrack.code}
+                onClick={() => {
+                  if (selectedTrack?.code === searchedTrack.code) {
+                    setSelectedTrack(null);
+                  } else {
+                    setSelectedTrack(searchedTrack);
+                  }
+                }}
+              >
+                <SearchedTrack
+                  searchedTrack={searchedTrack}
+                  selected={selectedTrack?.code === searchedTrack.code}
+                />
+              </div>
+            );
+          }
+        )}
       </div>
       {selectedTrack && (
         <div className="flex flex-row gap-2 items-center justify-center">
           <button
             onClick={async () => {
-              try {
-                await saveMutation.mutateAsync(selectedTrack.code);
-                close();
-              } catch (e: any) {
-                toast(e.response.data.message);
-              }
+              await saveTrackMutation.mutateAsync(selectedTrack.code);
+              close();
             }}
             className="bg-black text-white w-[100px] h-[40px]"
           >
@@ -131,7 +107,7 @@ const SearchTrack = ({
           </button>
         </div>
       )}
-      <Modal open={saveMutation.isLoading}>
+      <Modal open={saveTrackMutation.isLoading}>
         <div className="flex flex-col justify-center items-center">
           <img src="https://img.mk.co.kr/mkde/ic_loading_img.gif"></img>
         </div>

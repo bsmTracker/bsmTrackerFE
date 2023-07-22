@@ -1,53 +1,32 @@
 import { useRouter } from "next/router";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import axios from "../../axios";
 import { useEffect, useMemo, useState } from "react";
 import { Header } from "@/Components/Header";
-import { Auth } from "@/hoc/auth";
 import { CreateIcon } from "@/Components/Icon/CreateIcon";
 import { DeleteIcon } from "@/Components/Icon/DeleteIcon";
 import { Track } from "@/types/track";
 import TrackCo from "@/Components/Playlist/Track";
 import { Modal } from "@mui/material";
 import SearchTrack from "@/Components/Playlist/Search";
-import { Playlist } from "@/types/playlist";
 import { OrderIcon } from "@/Components/Icon/OrderIcon";
+import { usePlaylistDetailQuery } from "@/query/playlist";
+import { useSortTrackMutation, useUnSaveTrackMutation } from "@/query/track";
 
-const Playlist = () => {
+const PlaylistDetail = () => {
   const router = useRouter();
-  const queryClient = useQueryClient();
-  const id = useMemo(() => {
-    return Number(router.query.id);
-  }, [router.query.id]);
-  const playlistQuery = useQuery(["playlist", id], () => {
-    if (!id) return null;
-    return axios.get(`/api/playlist/${id}`).then((res) => res.data);
-  });
-  const playlist: Playlist = useMemo(() => {
-    return playlistQuery.data;
-  }, [playlistQuery.data]);
-  const deleteMutation = useMutation({
-    mutationKey: ["playlist", "track", "delete"],
-    mutationFn: (code: string) =>
-      axios.post("/api/track/unSave", {
-        playlistId: id,
-        code,
-      }),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(["playlist", id]);
-    },
-  });
 
-  const sortMutation = useMutation({
-    mutationKey: ["playlist", id, "track", "sort"],
-    mutationFn: (data: { fromIndex: number; toIndex: number }) =>
-      axios
-        .post("/api/track/changeTrackOrder", { ...data, playlistId: id })
-        .then((res) => res.data),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(["playlist", id]);
-    },
-  });
+  const playlistId = useMemo(() => {
+    return Number(router.query.id);
+  }, [router.query]);
+
+  const playlistDetailQuery = usePlaylistDetailQuery(playlistId);
+
+  const playlist = useMemo(() => {
+    return playlistDetailQuery.data;
+  }, [playlistDetailQuery.data]);
+
+  //track queries
+  const unSaveTrackMutation = useUnSaveTrackMutation(playlistId);
+  const sortTrackMutation = useSortTrackMutation(playlistId);
 
   const [addTrackModal, setAddTrackModal] = useState(false);
   const [listMode, setListMode] = useState<"none" | "select" | "sort">("none");
@@ -67,9 +46,7 @@ const Playlist = () => {
           <button
             onClick={async () => {
               selectedList.map(async (selected) => {
-                try {
-                  await deleteMutation.mutateAsync(selected.code);
-                } catch (e) {}
+                await unSaveTrackMutation.mutateAsync(selected.code);
               });
               setListMode("none");
             }}
@@ -86,16 +63,24 @@ const Playlist = () => {
     return (
       <input
         checked={
-          selectedList.find((selected) => selected.id === track.id)
+          selectedList.find(
+            (selected) => selected.playlistId === track.playlistId
+          )
             ? true
             : false
         }
         onChange={(e) => {
-          if (!selectedList.find((selected) => selected.id === track.id)) {
+          if (
+            !selectedList.find(
+              (selected) => selected.playlistId === track.playlistId
+            )
+          ) {
             setSelectList([...selectedList, track]);
           } else {
             setSelectList(
-              selectedList.filter((selected) => selected.id !== track.id)
+              selectedList.filter(
+                (selected) => selected.playlistId !== track.playlistId
+              )
             );
           }
         }}
@@ -148,7 +133,7 @@ const Playlist = () => {
     (async () => {
       if (!draggedTo || !draggedFrom) return;
       if (draggedFrom !== draggedTo) {
-        sortMutation.mutateAsync({
+        sortTrackMutation.mutateAsync({
           toIndex: draggedTo,
           fromIndex: draggedFrom,
         });
@@ -164,9 +149,9 @@ const Playlist = () => {
           <p className="text-[50px] font-bold">{playlist?.name}</p>
           <p className="text-[25px]">총 {playlist?.trackCount}개의 트랙</p>
           <p className="text-[25px]">
-            총 {Math.floor(playlist?.duration_s / 60 ** 2)}시간{" "}
-            {Math.floor(playlist?.duration_s / 60)}분{" "}
-            {Math.floor(playlist?.duration_s % 60)}초
+            총 {Math.floor((playlist?.duration_s ?? 0) / 60 ** 2)}시간{" "}
+            {Math.floor((playlist?.duration_s ?? 0) / 60)}분{" "}
+            {Math.floor((playlist?.duration_s ?? 0) % 60)}초
           </p>
         </div>
         <div className="flex flex-col justify-between gap-3">
@@ -177,10 +162,10 @@ const Playlist = () => {
       </div>
       <div className="px-[50px] mb-[100px]">
         {useMemo(() => {
-          return playlist?.tracks?.map((track: Track, idx: number) => {
+          return playlist?.tracks?.map((track: Track, playlistIdx: number) => {
             return (
               <div
-                key={track.id}
+                key={track.playlistId}
                 className="flex items-center bg-[#F5F5F5] px-[10px] gap-3 my-[5px] min-h-[100px] max-h-[190px] rounded-lg"
                 draggable={listMode === "sort"}
                 data-position={track.order}
@@ -191,7 +176,7 @@ const Playlist = () => {
                 onDragEnter={onDragEnter}
                 onDragEnd={onDragEnd}
               >
-                {listMode === "sort" && <p>{idx + 1}</p>}
+                {listMode === "sort" && <p>{playlistIdx + 1}</p>}
                 {listMode === "select" && <SelectUI track={track} />}
                 <TrackCo track={track} showOption={listMode === "none"} />
               </div>
@@ -223,10 +208,13 @@ const Playlist = () => {
         open={addTrackModal}
         onClose={() => setAddTrackModal(false)}
       >
-        <SearchTrack playlistId={id} close={() => setAddTrackModal(false)} />
+        <SearchTrack
+          playlistId={playlistId}
+          close={() => setAddTrackModal(false)}
+        />
       </Modal>
     </>
   );
 };
 
-export default Auth(Playlist);
+export default PlaylistDetail;

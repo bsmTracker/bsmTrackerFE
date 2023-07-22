@@ -1,10 +1,8 @@
-import Image from "next/image";
-
 export const PauseIcon = ({ onClick }: { onClick?: any }) => {
   return (
     <img
       alt="delete"
-      src="http://localhost:8000/pause.png"
+      src={`${process.env.NEXT_PUBLIC_SERVER_URL}/pause.png`}
       className="cursor-pointer"
       width={30}
       height={30}

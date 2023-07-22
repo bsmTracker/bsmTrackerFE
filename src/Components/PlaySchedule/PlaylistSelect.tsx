@@ -1,4 +1,4 @@
-import { usePlaylistsQuery } from "@/query/playlist.query";
+import { usePlaylistListQuery } from "@/query/playlist";
 import { Playlist } from "@/types/playlist";
 import { useMemo } from "react";
 
@@ -9,7 +9,7 @@ export const PlaylistSelect = ({
   selectedPlaylist?: Playlist | null;
   setSelectedPlaylist: any;
 }) => {
-  const { playlistsQuery } = usePlaylistsQuery();
+  const playlistListQuery = usePlaylistListQuery();
 
   const select = useMemo(
     () => (
@@ -17,7 +17,7 @@ export const PlaylistSelect = ({
         defaultValue={selectedPlaylist?.id || 0}
         onChange={async (e: any) => {
           if (e.target.value != 0) {
-            const selected = playlistsQuery?.data?.find(
+            const selected = playlistListQuery?.data?.find(
               (playlist: Playlist) => playlist.id === Number(e.target.value)
             );
             setSelectedPlaylist(selected);
@@ -29,7 +29,7 @@ export const PlaylistSelect = ({
         <option key={0} value={0}>
           없음
         </option>
-        {playlistsQuery?.data?.map((playlist: Playlist) => {
+        {playlistListQuery?.data?.map((playlist: Playlist) => {
           return (
             <option key={playlist.id} value={playlist.id}>
               {playlist.name}

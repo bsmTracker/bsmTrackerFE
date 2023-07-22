@@ -1,34 +1,28 @@
 import { PlaySchedule, ScheduleEnum } from "@/types/playSchedule";
 import { Modal, Switch } from "@mui/material";
-import axios from "../../axios";
-import { useMutation, useQueryClient } from "react-query";
 import { SettingIcon } from "../Icon/SettingIcon";
 import { AddEditPlayScheduleModal } from "./AddEditModal";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import { overlappingScheduleState } from "./store/overlappingSchedule";
+import { overlappingScheduleState } from "../../store/overlappingSchedule";
 import { useRecoilState } from "recoil";
+import {
+  useFindOverlappingPlayScheduleMutation,
+  useSetPlayScheduleActiveStatusMutation,
+} from "@/query/playSchedule";
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 
 export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
   const [editPlayScheduleModal, setEditPlayScheduleModal] = useState(false);
 
-  const queryClient = useQueryClient();
-  const mutation = useMutation(
-    () => axios.post(`/api/play-schedule/${schedule.id}/toggleActivation`),
-    {
-      async onSettled(data, error: any, variables, context) {
-        await queryClient.invalidateQueries({
-          queryKey: ["playSchedule", "list"],
-        });
-      },
-    }
-  );
+  const togglePlayScheduleStatusMutation =
+    useSetPlayScheduleActiveStatusMutation(schedule.id);
 
   const [overlappingSchedule, setOverlappingSchedule] = useRecoilState(
     overlappingScheduleState
   );
+  const findOverlappingPlayScheduleMutation =
+    useFindOverlappingPlayScheduleMutation(schedule.id);
   const [bgColor, setBgColor] = useState("bg-[#F5F5F5]");
 
   const name = schedule.name;
@@ -86,19 +80,14 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
       스케쥴 활성화 :{" "}
       <Switch
         onClick={async () => {
-          try {
-            await mutation.mutateAsync();
-          } catch (e: any) {
-            if (e?.response?.data?.id) {
-              toast(
-                `"${e.response.data?.name}"과 시간이 겹쳐 활성화 할 수 없습니다!`
-              );
-              setOverlappingSchedule(e.response.data);
-            }
-            if (e?.response?.data?.message) {
-              toast(mutation?.error?.response?.data?.message);
-            }
+          const targetStatus = !schedule.active;
+          if (targetStatus === true) {
+            const findedOverlappingPlaySchedule =
+              await findOverlappingPlayScheduleMutation.mutateAsync();
+            if (findedOverlappingPlaySchedule)
+              setOverlappingSchedule(findedOverlappingPlaySchedule);
           }
+          await togglePlayScheduleStatusMutation.mutateAsync(targetStatus);
         }}
         checked={schedule.active}
       />

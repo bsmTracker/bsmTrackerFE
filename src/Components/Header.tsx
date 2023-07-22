@@ -1,10 +1,12 @@
-// const
-
-import { userState } from "@/store/user";
-import { useRecoilValue } from "recoil";
+import { useUserQuery } from "@/query/user";
+import { useMemo } from "react";
 
 export const Header = () => {
-  const user = useRecoilValue(userState);
+  const userQuery = useUserQuery();
+
+  const user = useMemo(() => {
+    return userQuery.data;
+  }, [userQuery.data]);
 
   return (
     <div className="bg-white flex justify-between w-full p-[30px] border-b-black  border-b-[1px]">

@@ -1,8 +1,7 @@
 import { Audio } from "@/types/audio";
-import axios from "../../axios";
 import { useRef } from "react";
-import { useMutation } from "react-query";
 import { DeleteIcon } from "../Icon/DeleteIcon";
+import { addAudioMutation } from "@/query/audio";
 
 export const MelodyCo = ({
   setMelody,
@@ -12,14 +11,14 @@ export const MelodyCo = ({
   melody?: Audio | null;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const mutation = useMutation((data) => axios.post(`/api/audio`, data));
+  const addAudiomutation = addAudioMutation();
 
-  const upload = () => {
+  const upload = async () => {
     if (!inputRef.current?.files) return;
     const formData: any = new FormData();
     formData.append("audio", inputRef?.current?.files[0]);
-    const d = mutation.mutate(formData, {
-      onSuccess: ({ data }) => {
+    await addAudiomutation.mutateAsync(formData, {
+      onSuccess: (data: Audio) => {
         setMelody(data);
       },
     });
