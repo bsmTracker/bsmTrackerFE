@@ -1,15 +1,16 @@
 import { Header } from "@/Components/Header";
 import { Playlist } from "@/types/playlist";
 import { PlaySchedule } from "@/types/playSchedule";
-import { PlaylistCo } from "@/Components/Playlist/Playlist";
-import { PlayScheduleCo } from "@/Components/PlaySchedule/PlaySchedule";
+import { PlaylistCo } from "@/Components/Playlist/PlaylistCo";
+import { PlayScheduleCo } from "@/Components/PlaySchedule/PlayScheduleCo";
 import { CreateIcon } from "@/Components/Icon/CreateIcon";
 import { useState } from "react";
 import { AddEditPlayScheduleModal } from "@/Components/PlaySchedule/AddEditModal";
-import { Modal } from "@mui/material";
-import { CreatePlaylistModal } from "@/Components/Playlist/CreateModal";
+import { CreatePlaylistModal } from "@/Components/Playlist/CreatePlaylistModal";
 import { usePlaylistListQuery } from "@/query/playlist";
 import { usePlayScheduleListQuery } from "@/query/playSchedule";
+import { ModalUI } from "@/Components/globalStyle";
+import tw from "tailwind-styled-components";
 
 function Home() {
   const playScheduleListQuery = usePlayScheduleListQuery();
@@ -18,53 +19,51 @@ function Home() {
   const [createPlaylistModal, setCreatePlaylistModal] = useState(false);
 
   return (
-    <div>
+    <MainUI>
       <Header />
-      <div className="p-[30px]">
-        <div>
-          <div className="flex flex-row gap-4">
-            <h1 className="text-[30px]">
-              플레이리스트 ({playlistListQuery?.data?.length}개)
-            </h1>
-            <CreateIcon onClick={() => setCreatePlaylistModal(true)} />
-          </div>
-          <div className="flex flex-row my-[30px] gap-3 overflow-x-scroll">
-            {playlistListQuery?.data?.map((playlist: Playlist) => (
-              <PlaylistCo key={playlist.id} playlist={playlist} />
-            ))}
-          </div>
-          <div className="flex flex-row gap-4">
-            <h1 className="text-[30px]">
-              플레이스케줄 ({playScheduleListQuery?.data?.length}건)
-            </h1>
-            <CreateIcon onClick={() => setPlayScheduleModal(true)} />
-          </div>
-          <div className="flex flex-row my-[30px] gap-3 overflow-x-scroll">
-            {playScheduleListQuery?.data?.map((schedule: PlaySchedule) => {
-              return <PlayScheduleCo key={schedule.id} schedule={schedule} />;
-            })}
-          </div>
-        </div>
-      </div>
-      <Modal
-        open={playScheduleModal}
-        onClose={() => setPlayScheduleModal(false)}
-        className="flex items-center justify-center"
-      >
+      <WrapperUI>
+        <WrapperHeaderUI>
+          <WrapperTitleUI>
+            플레이리스트 ({playlistListQuery?.data?.length}개)
+          </WrapperTitleUI>
+          <CreateIcon onClick={() => setCreatePlaylistModal(true)} />
+        </WrapperHeaderUI>
+        <WrapperContentUI>
+          {playlistListQuery?.data?.map((playlist: Playlist) => (
+            <PlaylistCo key={playlist.id} playlist={playlist} />
+          ))}
+        </WrapperContentUI>
+      </WrapperUI>
+      <WrapperUI>
+        <WrapperHeaderUI>
+          <WrapperTitleUI>
+            플레이스케줄 ({playScheduleListQuery?.data?.length}건)
+          </WrapperTitleUI>
+          <CreateIcon onClick={() => setPlayScheduleModal(true)} />
+        </WrapperHeaderUI>
+        <WrapperContentUI>
+          {playScheduleListQuery?.data?.map((schedule: PlaySchedule) => {
+            return <PlayScheduleCo key={schedule.id} schedule={schedule} />;
+          })}
+        </WrapperContentUI>
+      </WrapperUI>
+      <ModalUI open={playScheduleModal}>
         <AddEditPlayScheduleModal
           type="post"
           closeModal={() => setPlayScheduleModal(false)}
         />
-      </Modal>
-      <Modal
-        className="flex items-center justify-center"
-        open={createPlaylistModal}
-        onClose={() => setCreatePlaylistModal(false)}
-      >
+      </ModalUI>
+      <ModalUI open={createPlaylistModal}>
         <CreatePlaylistModal closeModal={() => setCreatePlaylistModal(false)} />
-      </Modal>
-    </div>
+      </ModalUI>
+    </MainUI>
   );
 }
+
+const MainUI = tw.div``;
+const WrapperUI = tw.div`flex flex-col p-[30px] gap-4`;
+const WrapperHeaderUI = tw.div`flex flex-row gap-4`;
+const WrapperTitleUI = tw.h1`text-[30px]`;
+const WrapperContentUI = tw.div`flex flex-row gap-4 overflow-x-scroll`;
 
 export default Home;

@@ -38,9 +38,9 @@ export type PlaySchedule = {
 
 export type PlayScheduleDto = {
   name: string;
-  startMelodyId?: number;
-  ttsId?: number;
-  playlistId?: number;
+  startMelodyId?: number | null;
+  ttsId?: number | null;
+  playlistId?: number | null;
   volume: number;
 } & PlayScheduleTimeDto;
 

@@ -1,9 +1,9 @@
 import { UserLoginDto } from "@/types/user";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useLoginMutation } from "@/query/user";
+import tw from "tailwind-styled-components";
 
 const Login = () => {
   const router = useRouter();
@@ -14,46 +14,36 @@ const Login = () => {
 
   const onSubmit = async (data: UserLoginDto) => {
     await loginMutation.mutateAsync(data, {
-      onSuccess: () => {
-        router.push("/");
-      },
+      onSuccess: () => router.push("/"),
     });
   };
 
   return (
-    <div className="flex flex-col w-full h-full items-center justify-center">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col min-w-[700px]"
-      >
-        <input
-          type="email"
-          {...register("email", {
-            required: true,
-          })}
-          placeholder="이메일"
-          className={inputStyle}
-        ></input>
-        <input
-          type="password"
-          {...register("password", {
-            required: true,
-          })}
-          placeholder="비밀번호"
-          className={inputStyle}
-        ></input>
-        <button type="submit" value="로그인" className={buttonStyle}>
-          로그인하기
-        </button>
-      </form>
-      <ToastContainer />
-    </div>
+    <LoginUI onSubmit={handleSubmit(onSubmit)}>
+      <h1>BsmTracker Login하기</h1>
+      <LoginInputUI
+        type="email"
+        placeholder="이메일"
+        {...register("email", {
+          required: true,
+        })}
+      ></LoginInputUI>
+      <LoginInputUI
+        type="password"
+        placeholder="비밀번호"
+        {...register("password", {
+          required: true,
+        })}
+      ></LoginInputUI>
+      <LoginButtonUI type="submit" value="로그인">
+        로그인하기
+      </LoginButtonUI>
+    </LoginUI>
   );
 };
 
-const buttonStyle =
-  "m-[10px] p-[10px] h-[60px] bg-black text-white text-center flex items-center justify-center cursor-pointer";
-
-const inputStyle = "bg-white border-black border-[0.5px] m-[10px] p-[10px]";
+const LoginUI = tw.form`flex flex flex-col w-full h-full items-center justify-center p-[10px]`;
+const LoginButtonUI = tw.button`m-[10px] p-[10px] h-[60px]  w-full max-w-[700px] bg-black text-white text-center flex items-center justify-center cursor-pointer`;
+const LoginInputUI = tw.input`bg-white border-black border-[0.5px] m-[10px] p-[10px] w-full max-w-[700px]`;
 
 export default Login;

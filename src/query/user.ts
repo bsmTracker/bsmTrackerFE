@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { USER_CACH_KEYS } from "./queryKey";
 import axios from "../axios";
-import { User, UserLoginDto } from "@/types/user";
+import { User, UserLoginDto } from "../types/user";
 
 const useUserQuery = () => {
   return useQuery({
@@ -12,16 +12,21 @@ const useUserQuery = () => {
   });
 };
 
+const useLogoutMutation = () => {
+  return useMutation({
+    mutationFn: async () => {
+      await axios.post("/api/oauth/logout");
+    },
+  });
+};
+
 const useLoginMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (loginDto: UserLoginDto) => {
       await axios.post("/api/oauth/login", loginDto);
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries(USER_CACH_KEYS.userKey);
-    },
   });
 };
 
-export { useUserQuery, useLoginMutation };
+export { useUserQuery, useLoginMutation, useLogoutMutation };

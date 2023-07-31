@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import ReactDatePicker, { registerLocale } from "react-datepicker";
+import tw from "tailwind-styled-components";
 import ko from "date-fns/locale/ko";
 registerLocale("ko", ko);
 
-export const EventSelect = ({
+export const EventSelectCo = ({
   startDateStr,
   endDateStr,
   setStartDateStr,
@@ -23,23 +24,27 @@ export const EventSelect = ({
   }, [startDate, endDate]);
 
   return (
-    <div className="flex flex-row gap-5">
-      <ReactDatePicker
-        className="bg-[#f5f5f5] w-[150px] p-2 text-center rounded-lg"
+    <EventSelectCoUI>
+      <DatePickerUI
         locale="ko"
         selected={startDate}
         dateFormat="yyyy-MM-dd"
         onChange={(date: any) => setStartDate(date)}
       />
       부터
-      <ReactDatePicker
-        className="bg-[#f5f5f5] w-[150px] p-2 text-center rounded-lg"
+      <DatePickerUI
         locale="ko"
         selected={endDate}
         dateFormat="yyyy-MM-dd"
         onChange={(date: any) => setEndDate(date)}
       />
       까지
-    </div>
+    </EventSelectCoUI>
   );
 };
+
+const EventSelectCoUI = tw.div`flex flex-row gap-5`;
+
+const DatePickerUI = tw(
+  ReactDatePicker
+)`bg-[#f5f5f5] w-[150px] p-2 text-center rounded-lg`;

@@ -1,38 +1,46 @@
-import { useUserQuery } from "@/query/user";
+import { useLogoutMutation, useUserQuery } from "@/query/user";
+import { useRouter } from "next/router";
 import { useMemo } from "react";
+import tw from "tailwind-styled-components";
 
 export const Header = () => {
   const userQuery = useUserQuery();
+  const logoutMutation = useLogoutMutation();
 
   const user = useMemo(() => {
     return userQuery.data;
   }, [userQuery.data]);
+  const router = useRouter();
+
+  const logoutHandler = async () => {
+    //로그아웃
+    console.log("logout...");
+    await logoutMutation.mutateAsync();
+    router.push("/");
+  };
 
   return (
-    <div className="bg-white flex justify-between w-full p-[30px] border-b-black  border-b-[1px]">
-      <div className="flex flex-row">
-        <h1
+    <HeaderUI>
+      <RowUI>
+        <LogoUI
           onClick={() => {
             location.replace("/");
           }}
-          className="text-black text-[40px] cursor-pointer font-bold"
         >
           BsmTracker
-        </h1>
-        <p className="font-bold">부산소마고</p>
-      </div>
-      <div
-        onClick={() => {
-          if (!user) {
-            //로그아웃
-          }
-        }}
-        className="text-black flex items-center"
-      >
-        <p className="font-medium text-[25px]">
-          {user?.name ?? "로그인하세요"}
-        </p>
-      </div>
-    </div>
+        </LogoUI>
+        <SchoolNameUI>부산소마고</SchoolNameUI>
+      </RowUI>
+      <ColUI onClick={logoutHandler}>
+        <UserNameUI>{user?.name ?? "로그인하세요"}</UserNameUI>
+      </ColUI>
+    </HeaderUI>
   );
 };
+
+const HeaderUI = tw.div`bg-white flex justify-between w-full p-[30px] border-b-black  border-b-[1px]`;
+const RowUI = tw.div`flex flex-row`;
+const ColUI = tw.div`flex flex-col`;
+const LogoUI = tw.div`text-black text-[40px] cursor-pointer font-bold`;
+const SchoolNameUI = tw.p`font-bold`;
+const UserNameUI = tw.p`font-medium text-[25px]`;

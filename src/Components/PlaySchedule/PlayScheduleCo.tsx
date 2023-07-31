@@ -9,6 +9,8 @@ import {
   useFindOverlappingPlayScheduleMutation,
   useSetPlayScheduleActiveStatusMutation,
 } from "@/query/playSchedule";
+import tw from "tailwind-styled-components";
+import { ModalUI } from "../globalStyle";
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -42,41 +44,39 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
     }
   }, [overlappingSchedule]);
 
+  const settingClickHandler = () => {
+    setEditPlayScheduleModal(true);
+  };
+
   return (
-    <div
-      className={`${bgColor} p-[30px] cursor-pointer min-w-[280px] rounded-lg`}
-    >
-      <div className="flex justify-between gap-3">
-        <p className="text-[30px]">
+    <PlayScheduleCoUI bgColor={bgColor}>
+      <BetweenUI>
+        <NameUI>
           {schedule.name.length > 10 ? name.substring(0, 10) + ".." : name}
-        </p>
-        <SettingIcon
-          onClick={() => {
-            setEditPlayScheduleModal(true);
-          }}
-        />
-      </div>
-      <p className="text-[14px] font-bold">
+        </NameUI>
+        <SettingIcon onClick={settingClickHandler} />
+      </BetweenUI>
+      <ContentUI>
         {schedule.scheduleType === ScheduleEnum.DAYS_OF_WEEK &&
           schedule.daysOfWeek.sort().map((day: number) => days[day] + " ")}
         {schedule.scheduleType === ScheduleEnum.EVENT &&
           `${schedule.startDate} ~ ${schedule.endDate}`}
-      </p>
-      <p className="text-[18px] font-bold">
+      </ContentUI>
+      <TimeContentUI>
         시작 : {schedule.startTime.hour}시 {schedule.startTime.minute}분{" "}
         {schedule.startTime.second}초
-      </p>
-      <p className="text-[18px] font-bold">
+      </TimeContentUI>
+      <TimeContentUI>
         종료 : {schedule.endTime.hour}시 {schedule.endTime.minute}분{" "}
         {schedule.endTime.second}초
-      </p>
+      </TimeContentUI>
       <p>시작멜로디 {schedule.startMelody ? "있음" : "없음"}</p>
       <p>tts {schedule.tts ? "있음" : "없음"}</p>
-      <p className="text-[15px]">
+      <ContentUI>
         플레이리스트 :{" "}
         {schedule.playlist ? <a>{schedule.playlist.name}</a> : "없음"}
-      </p>
-      <p className="text-[15px]">설정볼륨 : {schedule.volume}%</p>
+      </ContentUI>
+      <ContentUI>설정볼륨 : {schedule.volume}%</ContentUI>
       스케쥴 활성화 :{" "}
       <Switch
         onClick={async () => {
@@ -91,11 +91,7 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
         }}
         checked={schedule.active}
       />
-      <Modal
-        open={editPlayScheduleModal}
-        onClose={() => {}}
-        className="flex items-center justify-center"
-      >
+      <ModalUI open={editPlayScheduleModal}>
         <AddEditPlayScheduleModal
           playSchedule={schedule}
           type="put"
@@ -103,7 +99,15 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
             setEditPlayScheduleModal(false);
           }}
         />
-      </Modal>
-    </div>
+      </ModalUI>
+    </PlayScheduleCoUI>
   );
 };
+
+const PlayScheduleCoUI = tw.div<{ bgColor: string }>`${({ bgColor }) =>
+  bgColor} p-[30px] cursor-pointer min-w-[280px] rounded-lg`;
+
+const ContentUI = tw.p`text-[15px] font-bold`;
+const TimeContentUI = tw.p`text-[18px] font-bold`;
+const NameUI = tw.p`text-[30px]`;
+const BetweenUI = tw.div`flex justify-between gap-3`;

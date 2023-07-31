@@ -1,56 +1,63 @@
 import { Time } from "@/types/playSchedule";
+import tw from "tailwind-styled-components";
 
-export const TimeSelect = ({ time, setTime }: { time: Time; setTime: any }) => {
+export const TimeSelectCo = ({
+  time,
+  setTime,
+}: {
+  time: Time;
+  setTime: any;
+}) => {
   return (
-    <div className="flex flex-row gap-5">
-      <select
-        defaultValue={time.hour}
+    <TimeSelectCoUI>
+      <TimeSelectUI
+        value={time.hour}
         onChange={(e: any) =>
           setTime({
             ...time,
             hour: Number(e.target.value),
           })
         }
-        className="w-[90px]"
       >
         {new Array(24).fill(0).map((_, indx) => (
           <option key={indx} value={indx}>
             {indx}시
           </option>
         ))}
-      </select>
-      <select
-        defaultValue={time.minute}
+      </TimeSelectUI>
+      <TimeSelectUI
+        value={time.minute}
         onChange={(e: any) =>
           setTime({
             ...time,
             minute: Number(e.target.value),
           })
         }
-        className="w-[90px]"
       >
         {new Array(60).fill(0).map((_, indx) => (
           <option key={indx} value={indx}>
             {indx}분
           </option>
         ))}
-      </select>
-      <select
-        defaultValue={time.second}
+      </TimeSelectUI>
+      <TimeSelectUI
+        value={time.second}
         onChange={(e: any) =>
           setTime({
             ...time,
             second: Number(e.target.value),
           })
         }
-        className="w-[90px]"
       >
         {new Array(60).fill(0).map((_, indx) => (
           <option key={indx} value={indx}>
             {indx}초
           </option>
         ))}
-      </select>
-    </div>
+      </TimeSelectUI>
+    </TimeSelectCoUI>
   );
 };
+
+const TimeSelectCoUI = tw.div`flex flex-row gap-5`;
+const TimeSelectUI = tw.select`w-[90px]`;

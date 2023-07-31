@@ -54,9 +54,22 @@ const useAddPlaylistMutation = () => {
   });
 };
 
+const useDeletePlaylistMutation = (playlistId: number) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (_: null) => {
+      await axios.delete(`/api/playlist/${playlistId}`);
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(PLAYLIST_CACHE_KEYS.playlistListKey);
+    },
+  });
+};
+
 export {
   usePlaylistListQuery,
   useAddPlaylistMutation,
   useSearchTrackQuery,
   usePlaylistDetailQuery,
+  useDeletePlaylistMutation,
 };

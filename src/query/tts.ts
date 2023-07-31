@@ -9,4 +9,12 @@ const useAddTtsMutation = () => {
   });
 };
 
-export { useAddTtsMutation };
+const useRemoveTtsMutation = () => {
+  return useMutation({
+    mutationFn: async (ttsId: number) => {
+      await axios.delete(`/api/tts/${ttsId}`);
+    },
+  });
+};
+
+export { useAddTtsMutation, useRemoveTtsMutation };

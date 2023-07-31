@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
-
+// import {}
 const RESPONSE = {
   STATUS: {
     OK: 200,
@@ -15,11 +15,16 @@ const responseInterceptors = (response: AxiosResponse) => {
   return response;
 };
 
-const responseErrorInterceptors = (errorResponse: any) => {
+const responseErrorInterceptors = async (errorResponse: any) => {
   const { response } = errorResponse;
   if (response?.status === RESPONSE.STATUS.UNAUTHORIZED) {
     toast("로그인을 해야합니다.");
-    window.location.href = "/login";
+    await new Promise((resolve) =>
+      setTimeout(() => {
+        location.href = "/login";
+      }, 1000)
+    );
+
     return;
   } else if (response?.status === RESPONSE.STATUS.FORBIDDEN) {
     toast("해당 작업은 권한에 맞는 작업이 아닙니다.");

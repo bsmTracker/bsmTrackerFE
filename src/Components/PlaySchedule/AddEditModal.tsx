@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   PlaySchedule,
@@ -9,13 +9,14 @@ import {
 import { Audio } from "@/types/audio";
 import { Tts } from "@/types/tts";
 import { Playlist } from "@/types/playlist";
-import { DaysOfWeekSelect } from "@/Components/PlaySchedule/DaysOfWeekSelect";
-import { EventSelect } from "@/Components/PlaySchedule/EventSelect";
-import { TimeSelect } from "@/Components/PlaySchedule/TimeSelect";
+import { DaysOfWeekSelectCo } from "@/Components/PlaySchedule/DaysOfWeekSelectCo";
+import { EventSelectCo } from "@/Components/PlaySchedule/EventSelectCo";
+import { TimeSelectCo } from "@/Components/PlaySchedule/TimeSelectCo";
 import { MelodyCo } from "@/Components/PlaySchedule/MelodyCo";
 import { TTSCo } from "@/Components/PlaySchedule/TtsCo";
-import { PlaylistSelect } from "@/Components/PlaySchedule/PlaylistSelect";
+import { PlaylistSelectCo } from "@/Components/PlaySchedule/PlaylistSelectCo";
 import { toast } from "react-toastify";
+import tw from "tailwind-styled-components";
 
 import {
   useAddPlayScheduleMutation,
@@ -62,22 +63,18 @@ export const AddEditPlayScheduleModal = ({
   const [melody, setMelody] = useState<Audio | null>(
     playSchedule?.startMelody || null
   );
-
   const [tts, setTts] = useState<Tts | null>(playSchedule?.tts || null);
   const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(
     playSchedule?.playlist || null
   );
-
   const [volume, setVolume] = useState(playSchedule?.volume || 25);
-
   const addPlayScheduleMutation = useAddPlayScheduleMutation();
   const editPlayScheduleMutation = useEditPlayScheduleMutation(
     playSchedule?.id
   );
-
   const deleteMutation = useDeletePlayScheduleMutation(playSchedule?.id);
 
-  const submit = async () => {
+  const submitHandler = async () => {
     const scheduleData: PlayScheduleDto = {
       name: scheduleName,
       scheduleType,
@@ -86,11 +83,12 @@ export const AddEditPlayScheduleModal = ({
       endTime,
       startDate: startDateStr,
       endDate: endDateStr,
-      startMelodyId: melody?.id,
-      ttsId: tts?.id,
-      playlistId: selectedPlaylist?.id,
+      startMelodyId: melody?.id ?? null,
+      ttsId: tts?.id ?? null,
+      playlistId: selectedPlaylist?.id ?? null,
       volume,
     };
+    console.log(scheduleData, "____");
     if (!scheduleData.name) {
       toast("스케쥴 명을 입력하세요");
       return;
@@ -127,106 +125,95 @@ export const AddEditPlayScheduleModal = ({
     closeModal();
   };
 
-  const scheduleSelect = useMemo(
-    () => (
-      <select
-        value={scheduleType}
-        onChange={(e: any) => setScheduleType(Number(e.target.value))}
-      >
-        <option value={ScheduleEnum.EVENT}>이벤트형</option>
-        <option value={ScheduleEnum.DAYS_OF_WEEK}>요일형</option>
-      </select>
-    ),
-    [scheduleType]
-  );
+  const deleteHandler = async () => {
+    await deleteMutation.mutateAsync();
+    closeModal();
+  };
+
+  const volumeChangeHandler = (e: any) => setVolume(e.target.value);
 
   return (
-    <div className="p-[50px] flex flex-col gap-5 bg-white">
-      <div className="flex flex-col gap-2 bg-white">
-        <p className="text-[30px]">스케쥴 명</p>
-        <input
-          className="bg-[#F3F3F3] w-[300px] h-[50px] py-1 px-2 rounded-lg"
+    <AddEditPlayScheduleModalUI>
+      <PlayScheduleDataGroupUI>
+        <ExplainText>스케쥴 명</ExplainText>
+        <InputUI
           placeholder="기상시간"
           onChange={(e) => setScheduleName(e.target.value)}
           value={scheduleName}
         />
-      </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex flex-row gap-3 items-center ">
-          <p className="text-[30px]">스케쥴 시간</p>
-          {scheduleSelect}
-        </div>
+      </PlayScheduleDataGroupUI>
+      <PlayScheduleDataGroupUI>
+        <RowGapUI>
+          <ExplainText>스케쥴 시간</ExplainText>
+          <select
+            value={scheduleType}
+            onChange={(e: any) => setScheduleType(Number(e.target.value))}
+          >
+            <option value={ScheduleEnum.EVENT}>이벤트형</option>
+            <option value={ScheduleEnum.DAYS_OF_WEEK}>요일형</option>
+          </select>
+        </RowGapUI>
         {scheduleType === ScheduleEnum.DAYS_OF_WEEK && (
-          <DaysOfWeekSelect
+          <DaysOfWeekSelectCo
             selectedDays={daysOfWeek}
             setSelectedDays={setDaysOfWeek}
           />
         )}
         {scheduleType === ScheduleEnum.EVENT && (
-          <EventSelect
+          <EventSelectCo
             startDateStr={startDateStr}
             endDateStr={endDateStr}
             setStartDateStr={setStartDateStr}
             setEndDateStr={setEndDateStr}
           />
         )}
-        <div className="flex flex-row gap-3">
+        <TimeSelectWrapperUI>
           <p>시작 : </p>
-          <TimeSelect time={startTime} setTime={setStartTime} />
-        </div>
-        <div className="flex flex-row gap-3">
+          <TimeSelectCo time={startTime} setTime={setStartTime} />
+        </TimeSelectWrapperUI>
+        <TimeSelectWrapperUI>
           <p>종료 : </p>
-          <TimeSelect time={endTime} setTime={setEndTime} />
-        </div>
-      </div>
-      <div className="flex flex-col gap-2">
-        <p className="text-[30px]">재생정보</p>
+          <TimeSelectCo time={endTime} setTime={setEndTime} />
+        </TimeSelectWrapperUI>
+      </PlayScheduleDataGroupUI>
+      <PlayScheduleDataGroupUI>
+        <ExplainText>재생정보</ExplainText>
         <MelodyCo melody={melody} setMelody={setMelody} />
         <TTSCo tts={tts} setTTS={setTts} />
-        <PlaylistSelect
+        <PlaylistSelectCo
           selectedPlaylist={selectedPlaylist}
           setSelectedPlaylist={setSelectedPlaylist}
         />
-        <div className="flex flex-row w-full items-center">
+        <RowGapUI>
           <p className="w-[110px]"> 볼륨 : {volume}%</p>
-          <input
-            id="small-range"
+          <VolumeSelectInputUI
             type="range"
             value={volume}
             max={100}
             min={20}
-            onChange={(e: any) => setVolume(e.target.value)}
-            className="w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-sm dark:bg-gray-700"
-          ></input>
-        </div>
-      </div>
-      <div className="flex flex-row gap-2">
-        <button
-          onClick={() => submit()}
-          className="bg-black text-white p-2 w-[150px]  text-[30px]"
-        >
-          {type == "put" ? "수정" : "추가"}
-        </button>
-        {type == "put" && (
-          <button
-            onClick={async () => {
-              await deleteMutation.mutateAsync();
-              closeModal();
-            }}
-            className="bg-black text-white p-2 w-[150px]  text-[30px]"
-          >
-            삭제
-          </button>
-        )}
-        <button
-          onClick={() => closeModal()}
-          className="bg-black text-white p-2 w-[150px] text-[30px]"
-        >
-          취소
-        </button>
-      </div>
-    </div>
+            onChange={volumeChangeHandler}
+          />
+        </RowGapUI>
+      </PlayScheduleDataGroupUI>
+      <PlayScheduleBtnWrapperUI>
+        <ButtonUI onClick={submitHandler}>
+          {type == "put" ? "닫기" : "추가"}
+        </ButtonUI>
+        {type == "post" && <ButtonUI onClick={closeModal}>취소</ButtonUI>}
+        {type == "put" && <ButtonUI onClick={deleteHandler}>삭제</ButtonUI>}
+      </PlayScheduleBtnWrapperUI>
+    </AddEditPlayScheduleModalUI>
   );
 };
+
+const AddEditPlayScheduleModalUI = tw.div`p-[50px] flex flex-col gap-5 bg-white`;
+const PlayScheduleDataGroupUI = tw.div`flex flex-col gap-2`;
+const ExplainText = tw.p`text-[30px]`;
+const PlayScheduleBtnWrapperUI = tw.div`flex flex-row gap-2`;
+const TimeSelectWrapperUI = tw.div`flex flex-row gap-3`;
+const ButtonUI = tw.button`bg-black text-white p-2 w-[150px]  text-[30px]`;
+const RowGapUI = tw.div`flex flex-row gap-3 items-center`;
+const VolumeSelectInputUI = tw.input`w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-sm dark:bg-gray-700`;
+const InputUI = tw.input`bg-[#F3F3F3] w-[300px] h-[50px] py-1 px-2 rounded-lg`;
 
 export default AddEditPlayScheduleModal;

@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { RecoilRoot } from "recoil";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Router } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(
@@ -16,11 +17,16 @@ export default function App({ Component, pageProps }: AppProps) {
       },
     })
   );
+
+  // const router = useRouter();
+
   return (
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
+        {/* <Router history={history}> */}
         <Component {...pageProps} />
         <ToastContainer />
+        {/* </Router> */}
       </RecoilRoot>
     </QueryClientProvider>
   );
