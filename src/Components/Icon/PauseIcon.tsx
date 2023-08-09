@@ -2,7 +2,7 @@ export const PauseIcon = ({ onClick }: { onClick?: any }) => {
   return (
     <img
       alt="delete"
-      src={`${process.env.NEXT_PUBLIC_SERVER_URL}/pause.png`}
+      src={`${process.env.NEXT_PUBLIC_CLIENT_URL}/pause.png`}
       className="cursor-pointer"
       width={30}
       height={30}

@@ -60,8 +60,8 @@ function Home() {
   );
 }
 
-const MainUI = tw.div``;
-const WrapperUI = tw.div`flex flex-col p-[30px] gap-4`;
+const MainUI = tw.div`pb-[30px]`;
+const WrapperUI = tw.div`flex flex-col pt-[30px] pl-[30px] gap-4`;
 const WrapperHeaderUI = tw.div`flex flex-row gap-4`;
 const WrapperTitleUI = tw.h1`text-[30px]`;
 const WrapperContentUI = tw.div`flex flex-row gap-4 overflow-x-scroll`;

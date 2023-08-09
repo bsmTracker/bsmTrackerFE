@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   PlaySchedule,
@@ -23,6 +23,8 @@ import {
   useDeletePlayScheduleMutation,
   useEditPlayScheduleMutation,
 } from "@/query/playSchedule";
+import { useRemoveAudioMutation } from "@/query/audio";
+import { useRemoveTtsMutation } from "@/query/tts";
 
 export const AddEditPlayScheduleModal = ({
   closeModal,
@@ -36,14 +38,15 @@ export const AddEditPlayScheduleModal = ({
   const [scheduleType, setScheduleType] = useState(
     playSchedule?.scheduleType || ScheduleEnum.EVENT
   );
-
+  const date = new Date();
+  let offset = date.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
+  let dateOffset = new Date(date.getTime() - offset).toISOString();
+  const today = dateOffset.substring(0, 10);
   const [daysOfWeek, setDaysOfWeek] = useState(playSchedule?.daysOfWeek || [1]);
   const [startDateStr, setStartDateStr] = useState(
-    playSchedule?.startDate || "2023-08-01"
+    playSchedule?.startDate || today
   );
-  const [endDateStr, setEndDateStr] = useState(
-    playSchedule?.endDate || "2023-08-01"
-  );
+  const [endDateStr, setEndDateStr] = useState(playSchedule?.endDate || today);
   const [startTime, setStartTime] = useState<Time>(
     playSchedule?.startTime || {
       hour: 6,
@@ -73,6 +76,8 @@ export const AddEditPlayScheduleModal = ({
     playSchedule?.id
   );
   const deleteMutation = useDeletePlayScheduleMutation(playSchedule?.id);
+  const removeAudioMutation = useRemoveAudioMutation();
+  const removeTtsMutation = useRemoveTtsMutation();
 
   const submitHandler = async () => {
     const scheduleData: PlayScheduleDto = {
@@ -88,7 +93,7 @@ export const AddEditPlayScheduleModal = ({
       playlistId: selectedPlaylist?.id ?? null,
       volume,
     };
-    console.log(scheduleData, "____");
+
     if (!scheduleData.name) {
       toast("스케쥴 명을 입력하세요");
       return;
@@ -127,6 +132,16 @@ export const AddEditPlayScheduleModal = ({
 
   const deleteHandler = async () => {
     await deleteMutation.mutateAsync();
+    closeModal();
+  };
+
+  const cancelHandler = async () => {
+    if (tts) {
+      await removeTtsMutation.mutateAsync(tts.id);
+    }
+    if (melody) {
+      await removeAudioMutation.mutateAsync(melody.id);
+    }
     closeModal();
   };
 
@@ -186,7 +201,7 @@ export const AddEditPlayScheduleModal = ({
         />
         <RowGapUI>
           <p className="w-[110px]"> 볼륨 : {volume}%</p>
-          <VolumeSelectInputUI
+          <VolumeInputUI
             type="range"
             value={volume}
             max={100}
@@ -199,7 +214,7 @@ export const AddEditPlayScheduleModal = ({
         <ButtonUI onClick={submitHandler}>
           {type == "put" ? "닫기" : "추가"}
         </ButtonUI>
-        {type == "post" && <ButtonUI onClick={closeModal}>취소</ButtonUI>}
+        {type == "post" && <ButtonUI onClick={cancelHandler}>취소</ButtonUI>}
         {type == "put" && <ButtonUI onClick={deleteHandler}>삭제</ButtonUI>}
       </PlayScheduleBtnWrapperUI>
     </AddEditPlayScheduleModalUI>
@@ -213,7 +228,7 @@ const PlayScheduleBtnWrapperUI = tw.div`flex flex-row gap-2`;
 const TimeSelectWrapperUI = tw.div`flex flex-row gap-3`;
 const ButtonUI = tw.button`bg-black text-white p-2 w-[150px]  text-[30px]`;
 const RowGapUI = tw.div`flex flex-row gap-3 items-center`;
-const VolumeSelectInputUI = tw.input`w-full h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer range-sm dark:bg-gray-700`;
+const VolumeInputUI = tw.input`h-2 w-full cursor-ew-resize appearance-none rounded-full bg-[#F5F5F5] accent-black`;
 const InputUI = tw.input`bg-[#F3F3F3] w-[300px] h-[50px] py-1 px-2 rounded-lg`;
 
 export default AddEditPlayScheduleModal;
