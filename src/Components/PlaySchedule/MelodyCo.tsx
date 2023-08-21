@@ -1,7 +1,7 @@
 import { Audio } from "@/types/audio";
 import { useRef } from "react";
 import { DeleteIcon } from "../Icon/DeleteIcon";
-import { addAudioMutation, useRemoveAudioMutation } from "@/query/audio";
+import { useAudioMutation, useRemoveAudioMutation } from "@/query/audio";
 import tw from "tailwind-styled-components";
 
 export const MelodyCo = ({
@@ -12,7 +12,7 @@ export const MelodyCo = ({
   melody?: Audio | null;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const addAudiomutation = addAudioMutation();
+  const addAudiomutation = useAudioMutation();
   const removeAudioMutation = useRemoveAudioMutation();
 
   const uploadHandler = async () => {

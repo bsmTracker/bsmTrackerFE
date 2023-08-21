@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "react-query";
 import axios from "../axios";
 import { Audio } from "@/types/audio";
 
-const addAudioMutation = () => {
+const useAudioMutation = () => {
   return useMutation({
     mutationFn: async (data: Audio) =>
       axios.post(`/api/audio`, data).then((res) => res?.data as Audio),
@@ -18,4 +18,4 @@ const useRemoveAudioMutation = () => {
   });
 };
 
-export { addAudioMutation, useRemoveAudioMutation };
+export { useAudioMutation, useRemoveAudioMutation };
