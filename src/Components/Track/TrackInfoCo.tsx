@@ -23,12 +23,12 @@ const TrackInfoCo = ({ track, order }: { track: Track; order: number }) => {
 const TrackInfoCoUI = tw.div`
 flex flex-row items-center gap-5
 `;
-
 const ColUI = tw.div``;
 const TrackNameUI = tw.p`font-bold`;
 const TrackDetailTextUI = tw.p``;
 const TrackImgUI = tw.img`
-w-[180px] h-[110px] object-cover`;
+
+w-[180px] h-[110px] object-cover min-w-[180px]`;
 
 const OrderUI = tw.p`font-bold text-[25px] text-gray-600`;
 

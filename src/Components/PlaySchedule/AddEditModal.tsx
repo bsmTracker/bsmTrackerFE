@@ -221,7 +221,7 @@ export const AddEditPlayScheduleModal = ({
   );
 };
 
-const AddEditPlayScheduleModalUI = tw.div`p-[50px] flex flex-col gap-5 bg-white`;
+const AddEditPlayScheduleModalUI = tw.div`p-[50px] flex flex-col min-w-[350px] max-h-[100%] overflow-y-scroll gap-5 bg-white`;
 const PlayScheduleDataGroupUI = tw.div`flex flex-col gap-2`;
 const ExplainText = tw.p`text-[30px]`;
 const PlayScheduleBtnWrapperUI = tw.div`flex flex-row gap-2`;

@@ -105,7 +105,7 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
 };
 
 const PlayScheduleCoUI = tw.div<{ bgColor: string }>`${({ bgColor }) =>
-  bgColor} p-[30px] cursor-pointer min-w-[280px] rounded-lg`;
+  bgColor} p-[30px] cursor-pointer w-[280px] rounded-lg`;
 
 const ContentUI = tw.p`text-[15px] font-bold`;
 const TimeContentUI = tw.p`text-[18px] font-bold`;

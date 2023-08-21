@@ -42,9 +42,9 @@ function Home() {
           <CreateIcon onClick={() => setPlayScheduleModal(true)} />
         </WrapperHeaderUI>
         <WrapperContentUI>
-          {playScheduleListQuery?.data?.map((schedule: PlaySchedule) => {
-            return <PlayScheduleCo key={schedule.id} schedule={schedule} />;
-          })}
+          {playScheduleListQuery?.data?.map((schedule: PlaySchedule) => (
+            <PlayScheduleCo key={schedule.id} schedule={schedule} />
+          ))}
         </WrapperContentUI>
       </WrapperUI>
       <ModalUI open={playScheduleModal}>
