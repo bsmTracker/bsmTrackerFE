@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import { toast } from "react-toastify";
 // import {}
 const RESPONSE = {
@@ -39,9 +39,13 @@ const responseErrorInterceptors = async (errorResponse: any) => {
   }
 };
 
-axios.interceptors.response.use(
+const bsmTrackerApi: AxiosInstance = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+});
+
+bsmTrackerApi.interceptors.response.use(
   responseInterceptors,
   responseErrorInterceptors
 );
 
-export default axios;
+export default bsmTrackerApi;

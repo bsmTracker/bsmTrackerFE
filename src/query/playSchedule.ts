@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axios";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { PLAYSCHEDULE_CACH_KEYS } from "./queryKey";
 import { PlaySchedule, PlayScheduleDto } from "@/types/playSchedule";

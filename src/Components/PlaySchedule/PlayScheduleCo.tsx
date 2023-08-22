@@ -1,5 +1,5 @@
 import { PlaySchedule, ScheduleEnum } from "@/types/playSchedule";
-import { Modal, Switch } from "@mui/material";
+import { Switch } from "@mui/material";
 import { SettingIcon } from "../Icon/SettingIcon";
 import { AddEditPlayScheduleModal } from "./AddEditModal";
 import { useEffect, useState } from "react";
