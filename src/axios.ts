@@ -39,13 +39,9 @@ const responseErrorInterceptors = async (errorResponse: any) => {
   }
 };
 
-const bsmTrackerApi: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
-});
-
-bsmTrackerApi.interceptors.response.use(
+axios.interceptors.response.use(
   responseInterceptors,
   responseErrorInterceptors
 );
 
-export default bsmTrackerApi;
+export default axios;
