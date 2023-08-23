@@ -21,12 +21,11 @@ const useLogoutMutation = () => {
 };
 
 const useLoginMutation = () => {
-  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (loginDto: UserLoginDto) => {
-      console.log(loginDto);
       const { data } = await axios.post("/api/oauth/login", loginDto);
-      console.log(data);
+      localStorage.setItem("access_token", data.accessToken);
+      axios.defaults.headers["access_token"] = data.accessToken;
     },
   });
 };

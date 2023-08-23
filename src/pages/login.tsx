@@ -15,7 +15,7 @@ const Login = () => {
   const onSubmit = async (data: UserLoginDto) => {
     await loginMutation.mutateAsync(data, {
       onSuccess: () => {
-        router.replace("/");
+        router.push("/");
       },
     });
   };

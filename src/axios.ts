@@ -11,6 +11,11 @@ const RESPONSE = {
   },
 };
 
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  withCredentials: true,
+});
+
 const responseInterceptors = (response: AxiosResponse) => {
   return response;
 };
@@ -24,7 +29,6 @@ const responseErrorInterceptors = async (errorResponse: any) => {
         location.href = "/login";
       }, 1000)
     );
-
     return;
   } else if (response?.status === RESPONSE.STATUS.FORBIDDEN) {
     toast("해당 작업은 권한에 맞는 작업이 아닙니다.");
@@ -39,10 +43,15 @@ const responseErrorInterceptors = async (errorResponse: any) => {
   }
 };
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
-  withCredentials: true,
-});
+function requestInterceptors(config: any) {
+  if (typeof window !== "undefined") {
+    const accessToken = localStorage.getItem("access_token");
+    console.log(accessToken);
+    config.headers["access_token"] = accessToken;
+  }
+  return config;
+}
+api.interceptors.request.use(requestInterceptors);
 api.interceptors.response.use(responseInterceptors, responseErrorInterceptors);
 
 export default api;
