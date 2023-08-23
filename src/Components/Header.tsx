@@ -17,7 +17,6 @@ export const Header = () => {
 
   const logoutHandler = async () => {
     //로그아웃
-    console.log("logout...");
     await logoutMutation.mutateAsync();
     router.reload();
   };

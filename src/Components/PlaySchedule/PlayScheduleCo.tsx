@@ -58,7 +58,7 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
       </BetweenUI>
       <ContentUI>
         {schedule.scheduleType === ScheduleEnum.DAYS_OF_WEEK &&
-          schedule.daysOfWeek.sort().map((day: number) => days[day] + " ")}
+          schedule?.daysOfWeek?.sort().map((day: number) => days[day] + " ")}
         {schedule.scheduleType === ScheduleEnum.EVENT &&
           `${schedule.startDate} ~ ${schedule.endDate}`}
       </ContentUI>

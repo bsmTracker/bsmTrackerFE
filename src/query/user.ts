@@ -24,7 +24,9 @@ const useLoginMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (loginDto: UserLoginDto) => {
-      await axios.post("/api/oauth/login", loginDto);
+      console.log(loginDto);
+      const { data } = await axios.post("/api/oauth/login", loginDto);
+      console.log(data);
     },
   });
 };

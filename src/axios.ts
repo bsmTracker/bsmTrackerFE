@@ -1,6 +1,6 @@
-import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosResponse } from "axios";
 import { toast } from "react-toastify";
-// import {}
+
 const RESPONSE = {
   STATUS: {
     OK: 200,
@@ -39,6 +39,8 @@ const responseErrorInterceptors = async (errorResponse: any) => {
   }
 };
 
+axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_URL;
+axios.defaults.withCredentials = true;
 axios.interceptors.response.use(
   responseInterceptors,
   responseErrorInterceptors
