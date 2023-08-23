@@ -20,7 +20,7 @@ function Home() {
 
   return (
     <MainUI>
-      <Header />
+      {/* <Header /> */}
       <WrapperUI>
         <WrapperHeaderUI>
           <WrapperTitleUI>

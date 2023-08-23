@@ -39,11 +39,10 @@ const responseErrorInterceptors = async (errorResponse: any) => {
   }
 };
 
-axios.defaults.baseURL = process.env.NEXT_PUBLIC_SERVER_URL;
-axios.defaults.withCredentials = true;
-axios.interceptors.response.use(
-  responseInterceptors,
-  responseErrorInterceptors
-);
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
+  withCredentials: true,
+});
+api.interceptors.response.use(responseInterceptors, responseErrorInterceptors);
 
-export default axios;
+export default api;
