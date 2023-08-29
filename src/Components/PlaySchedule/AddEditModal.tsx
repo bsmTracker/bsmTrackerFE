@@ -91,7 +91,7 @@ export const AddEditPlayScheduleModal = ({
       startMelodyId: melody?.id ?? null,
       ttsId: tts?.id ?? null,
       playlistId: selectedPlaylist?.id ?? null,
-      volume,
+      volume: volume,
     };
 
     if (!scheduleData.name) {
@@ -145,7 +145,7 @@ export const AddEditPlayScheduleModal = ({
     closeModal();
   };
 
-  const volumeChangeHandler = (e: any) => setVolume(e.target.value);
+  const volumeChangeHandler = (e: any) => setVolume(Number(e.target.value));
 
   return (
     <AddEditPlayScheduleModalUI>

@@ -11,10 +11,7 @@ const RESPONSE = {
   },
 };
 
-const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_SERVER_URL,
-  withCredentials: true,
-});
+axios.defaults.withCredentials = true;
 
 const responseInterceptors = (response: AxiosResponse) => {
   return response;
@@ -46,12 +43,15 @@ const responseErrorInterceptors = async (errorResponse: any) => {
 function requestInterceptors(config: any) {
   if (typeof window !== "undefined") {
     const accessToken = localStorage.getItem("access_token");
-    console.log(accessToken);
     config.headers["access_token"] = accessToken;
   }
   return config;
 }
-api.interceptors.request.use(requestInterceptors);
-api.interceptors.response.use(responseInterceptors, responseErrorInterceptors);
 
-export default api;
+axios.interceptors.request.use(requestInterceptors);
+axios.interceptors.response.use(
+  responseInterceptors,
+  responseErrorInterceptors
+);
+
+export default axios;
