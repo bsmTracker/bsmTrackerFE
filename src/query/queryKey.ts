@@ -9,5 +9,5 @@ export const PLAYSCHEDULE_CACH_KEYS = {
 };
 
 export const USER_CACH_KEYS = {
-  userKey: ["user"],
+  userKey: "user",
 };

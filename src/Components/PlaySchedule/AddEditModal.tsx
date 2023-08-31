@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   PlaySchedule,
@@ -25,13 +25,16 @@ import {
 } from "@/query/playSchedule";
 import { useRemoveAudioMutation } from "@/query/audio";
 import { useRemoveTtsMutation } from "@/query/tts";
+import { ModalUI } from "../globalStyle";
 
 export const AddEditPlayScheduleModal = ({
   closeModal,
   playSchedule,
   type,
+  open,
 }: {
   closeModal: any;
+  open: boolean;
   playSchedule?: PlaySchedule;
   type: "post" | "put";
 }) => {
@@ -148,76 +151,78 @@ export const AddEditPlayScheduleModal = ({
   const volumeChangeHandler = (e: any) => setVolume(Number(e.target.value));
 
   return (
-    <AddEditPlayScheduleModalUI>
-      <PlayScheduleDataGroupUI>
-        <ExplainText>스케쥴 명</ExplainText>
-        <InputUI
-          placeholder="기상시간"
-          onChange={(e) => setScheduleName(e.target.value)}
-          value={scheduleName}
-        />
-      </PlayScheduleDataGroupUI>
-      <PlayScheduleDataGroupUI>
-        <RowGapUI>
-          <ExplainText>스케쥴 시간</ExplainText>
-          <select
-            value={scheduleType}
-            onChange={(e: any) => setScheduleType(Number(e.target.value))}
-          >
-            <option value={ScheduleEnum.EVENT}>이벤트형</option>
-            <option value={ScheduleEnum.DAYS_OF_WEEK}>요일형</option>
-          </select>
-        </RowGapUI>
-        {scheduleType === ScheduleEnum.DAYS_OF_WEEK && (
-          <DaysOfWeekSelectCo
-            selectedDays={daysOfWeek}
-            setSelectedDays={setDaysOfWeek}
+    <ModalUI open={open}>
+      <AddEditPlayScheduleModalUI>
+        <PlayScheduleDataGroupUI>
+          <ExplainText>스케쥴 명</ExplainText>
+          <InputUI
+            placeholder="기상시간"
+            onChange={(e) => setScheduleName(e.target.value)}
+            value={scheduleName}
           />
-        )}
-        {scheduleType === ScheduleEnum.EVENT && (
-          <EventSelectCo
-            startDateStr={startDateStr}
-            endDateStr={endDateStr}
-            setStartDateStr={setStartDateStr}
-            setEndDateStr={setEndDateStr}
+        </PlayScheduleDataGroupUI>
+        <PlayScheduleDataGroupUI>
+          <RowGapUI>
+            <ExplainText>스케쥴 시간</ExplainText>
+            <select
+              value={scheduleType}
+              onChange={(e: any) => setScheduleType(Number(e.target.value))}
+            >
+              <option value={ScheduleEnum.EVENT}>이벤트형</option>
+              <option value={ScheduleEnum.DAYS_OF_WEEK}>요일형</option>
+            </select>
+          </RowGapUI>
+          {scheduleType === ScheduleEnum.DAYS_OF_WEEK && (
+            <DaysOfWeekSelectCo
+              selectedDays={daysOfWeek}
+              setSelectedDays={setDaysOfWeek}
+            />
+          )}
+          {scheduleType === ScheduleEnum.EVENT && (
+            <EventSelectCo
+              startDateStr={startDateStr}
+              endDateStr={endDateStr}
+              setStartDateStr={setStartDateStr}
+              setEndDateStr={setEndDateStr}
+            />
+          )}
+          <TimeSelectWrapperUI>
+            <p>시작 : </p>
+            <TimeSelectCo time={startTime} setTime={setStartTime} />
+          </TimeSelectWrapperUI>
+          <TimeSelectWrapperUI>
+            <p>종료 : </p>
+            <TimeSelectCo time={endTime} setTime={setEndTime} />
+          </TimeSelectWrapperUI>
+        </PlayScheduleDataGroupUI>
+        <PlayScheduleDataGroupUI>
+          <ExplainText>재생정보</ExplainText>
+          <MelodyCo melody={melody} setMelody={setMelody} />
+          <TTSCo tts={tts} setTTS={setTts} />
+          <PlaylistSelectCo
+            selectedPlaylist={selectedPlaylist}
+            setSelectedPlaylist={setSelectedPlaylist}
           />
-        )}
-        <TimeSelectWrapperUI>
-          <p>시작 : </p>
-          <TimeSelectCo time={startTime} setTime={setStartTime} />
-        </TimeSelectWrapperUI>
-        <TimeSelectWrapperUI>
-          <p>종료 : </p>
-          <TimeSelectCo time={endTime} setTime={setEndTime} />
-        </TimeSelectWrapperUI>
-      </PlayScheduleDataGroupUI>
-      <PlayScheduleDataGroupUI>
-        <ExplainText>재생정보</ExplainText>
-        <MelodyCo melody={melody} setMelody={setMelody} />
-        <TTSCo tts={tts} setTTS={setTts} />
-        <PlaylistSelectCo
-          selectedPlaylist={selectedPlaylist}
-          setSelectedPlaylist={setSelectedPlaylist}
-        />
-        <RowGapUI>
-          <p className="w-[110px]"> 볼륨 : {volume}%</p>
-          <VolumeInputUI
-            type="range"
-            value={volume}
-            max={100}
-            min={20}
-            onChange={volumeChangeHandler}
-          />
-        </RowGapUI>
-      </PlayScheduleDataGroupUI>
-      <PlayScheduleBtnWrapperUI>
-        <ButtonUI onClick={submitHandler}>
-          {type == "put" ? "닫기" : "추가"}
-        </ButtonUI>
-        {type == "post" && <ButtonUI onClick={cancelHandler}>취소</ButtonUI>}
-        {type == "put" && <ButtonUI onClick={deleteHandler}>삭제</ButtonUI>}
-      </PlayScheduleBtnWrapperUI>
-    </AddEditPlayScheduleModalUI>
+          <RowGapUI>
+            <p className="w-[110px]"> 볼륨 : {volume}%</p>
+            <VolumeInputUI
+              type="range"
+              value={volume}
+              max={100}
+              min={20}
+              onChange={volumeChangeHandler}
+            />
+          </RowGapUI>
+        </PlayScheduleDataGroupUI>
+        <PlayScheduleBtnWrapperUI>
+          <ButtonUI onClick={submitHandler}>
+            {type == "put" ? "닫기" : "추가"}
+          </ButtonUI>
+          {type == "post" && <ButtonUI onClick={cancelHandler}>취소</ButtonUI>}
+          {type == "put" && <ButtonUI onClick={deleteHandler}>삭제</ButtonUI>}
+        </PlayScheduleBtnWrapperUI>
+      </AddEditPlayScheduleModalUI>
+    </ModalUI>
   );
 };
 

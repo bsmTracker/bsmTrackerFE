@@ -5,12 +5,11 @@ import { PlaylistCo } from "@/Components/Playlist/PlaylistCo";
 import { PlayScheduleCo } from "@/Components/PlaySchedule/PlayScheduleCo";
 import { CreateIcon } from "@/Components/Icon/CreateIcon";
 import { useState } from "react";
-import { AddEditPlayScheduleModal } from "@/Components/PlaySchedule/AddEditModal";
 import { CreatePlaylistModal } from "@/Components/Playlist/CreatePlaylistModal";
 import { usePlaylistListQuery } from "@/query/playlist";
 import { usePlayScheduleListQuery } from "@/query/playSchedule";
-import { ModalUI } from "@/Components/globalStyle";
 import tw from "tailwind-styled-components";
+import AddEditPlayScheduleModal from "@/Components/PlaySchedule/AddEditModal";
 
 function Home() {
   const playScheduleListQuery = usePlayScheduleListQuery();
@@ -47,15 +46,15 @@ function Home() {
           ))}
         </WrapperContentUI>
       </WrapperUI>
-      <ModalUI open={playScheduleModal}>
-        <AddEditPlayScheduleModal
-          type="post"
-          closeModal={() => setPlayScheduleModal(false)}
-        />
-      </ModalUI>
-      <ModalUI open={createPlaylistModal}>
-        <CreatePlaylistModal closeModal={() => setCreatePlaylistModal(false)} />
-      </ModalUI>
+      <AddEditPlayScheduleModal
+        open={playScheduleModal}
+        type="post"
+        closeModal={() => setPlayScheduleModal(false)}
+      />
+      <CreatePlaylistModal
+        open={createPlaylistModal}
+        closeModal={() => setCreatePlaylistModal(false)}
+      />
     </MainUI>
   );
 }

@@ -1,7 +1,14 @@
 import { useState } from "react";
 import { useAddPlaylistMutation } from "@/query/playlist";
 import tw from "tailwind-styled-components";
-export const CreatePlaylistModal = ({ closeModal }: { closeModal?: any }) => {
+import { ModalUI } from "../globalStyle";
+export const CreatePlaylistModal = ({
+  closeModal,
+  open,
+}: {
+  closeModal?: any;
+  open: boolean;
+}) => {
   const [name, setName] = useState("");
 
   const addPlaylistMutation = useAddPlaylistMutation();
@@ -14,18 +21,20 @@ export const CreatePlaylistModal = ({ closeModal }: { closeModal?: any }) => {
   };
 
   return (
-    <CreatePlaylistUI>
-      <ModalExplainUI>재생목록 추가</ModalExplainUI>
-      <InputUI
-        placeholder="ex) 기상시간"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <ButtonGroupUI>
-        <ButtonUI onClick={addPlaylistHandler}>추가</ButtonUI>
-        <ButtonUI onClick={closeModal}>닫기</ButtonUI>
-      </ButtonGroupUI>
-    </CreatePlaylistUI>
+    <ModalUI open={open}>
+      <CreatePlaylistUI>
+        <ModalExplainUI>재생목록 추가</ModalExplainUI>
+        <InputUI
+          placeholder="ex) 기상시간"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <ButtonGroupUI>
+          <ButtonUI onClick={addPlaylistHandler}>추가</ButtonUI>
+          <ButtonUI onClick={closeModal}>닫기</ButtonUI>
+        </ButtonGroupUI>
+      </CreatePlaylistUI>
+    </ModalUI>
   );
 };
 

@@ -1,7 +1,6 @@
 import { PlaySchedule, ScheduleEnum } from "@/types/playSchedule";
 import { Switch } from "@mui/material";
 import { SettingIcon } from "../Icon/SettingIcon";
-import { AddEditPlayScheduleModal } from "./AddEditModal";
 import { useEffect, useState } from "react";
 import { overlappingScheduleState } from "../../store/overlappingSchedule";
 import { useRecoilState } from "recoil";
@@ -10,7 +9,7 @@ import {
   useSetPlayScheduleActiveStatusMutation,
 } from "@/query/playSchedule";
 import tw from "tailwind-styled-components";
-import { ModalUI } from "../globalStyle";
+import AddEditPlayScheduleModal from "./AddEditModal";
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -25,7 +24,7 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
   );
   const findOverlappingPlayScheduleMutation =
     useFindOverlappingPlayScheduleMutation(schedule.id);
-  const [bgColor, setBgColor] = useState("bg-[#F5F5F5]");
+  const [mark, setMark] = useState<boolean>(false);
 
   const name = schedule.name;
 
@@ -34,9 +33,9 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
       for (let i = 0; i < 4; i++) {
         setTimeout(() => {
           if (i % 2 === 1) {
-            setBgColor("bg-[#F5F5F5]");
+            setMark(false);
           } else {
-            setBgColor("bg-white border-black border-[2px]");
+            setMark(true);
           }
         }, 500 * i);
       }
@@ -49,7 +48,7 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
   };
 
   return (
-    <PlayScheduleCoUI bgColor={bgColor}>
+    <PlayScheduleCoUI mark={String(mark)}>
       <BetweenUI>
         <NameUI>
           {schedule.name.length > 10 ? name.substring(0, 10) + ".." : name}
@@ -91,21 +90,22 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
         }}
         checked={schedule.active}
       />
-      <ModalUI open={editPlayScheduleModal}>
-        <AddEditPlayScheduleModal
-          playSchedule={schedule}
-          type="put"
-          closeModal={() => {
-            setEditPlayScheduleModal(false);
-          }}
-        />
-      </ModalUI>
+      <AddEditPlayScheduleModal
+        open={editPlayScheduleModal}
+        playSchedule={schedule}
+        type="put"
+        closeModal={() => {
+          setEditPlayScheduleModal(false);
+        }}
+      />
     </PlayScheduleCoUI>
   );
 };
-
-const PlayScheduleCoUI = tw.div<{ bgColor: string }>`${({ bgColor }) =>
-  bgColor} p-[30px] cursor-pointer w-[280px] rounded-lg`;
+const PlayScheduleCoUI = tw.div`
+  p-[30px] cursor-pointer w-[280px] rounded-lg
+  ${({ mark }: { mark: string }) =>
+    mark === "true" ? `bg-white border-black border-[2px]` : `bg-[#F5F5F5]`}
+`;
 
 const ContentUI = tw.p`text-[15px] font-bold`;
 const TimeContentUI = tw.p`text-[18px] font-bold`;

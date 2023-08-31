@@ -17,11 +17,9 @@ const usePlaylistDetailQuery = (playlistId: number) => {
   return useQuery({
     queryKey: PLAYLIST_CACHE_KEYS.playlistDetailKey(playlistId),
     queryFn: async () => {
-      if (playlistId) {
-        return axios
-          .get(`/api/playlist/${playlistId}`)
-          .then((res) => res?.data as Playlist);
-      }
+      return axios
+        .get(`/api/playlist/${playlistId}`)
+        .then((res) => res?.data as Playlist);
     },
   });
 };

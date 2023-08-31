@@ -11,8 +11,6 @@ const RESPONSE = {
   },
 };
 
-axios.defaults.withCredentials = true;
-
 const responseInterceptors = (response: AxiosResponse) => {
   return response;
 };
@@ -48,6 +46,7 @@ function requestInterceptors(config: any) {
   return config;
 }
 
+// axios.defaults.withCredentials = true;
 axios.interceptors.request.use(requestInterceptors);
 axios.interceptors.response.use(
   responseInterceptors,

@@ -7,7 +7,7 @@ const useUserQuery = () => {
   return useQuery({
     queryKey: USER_CACH_KEYS.userKey,
     queryFn: async () => {
-      return axios.post("/api/oauth/getUser").then((res) => res?.data as User);
+      return axios.get("/api/oauth/getUser").then((res) => res?.data as User);
     },
   });
 };
@@ -24,9 +24,8 @@ const useLoginMutation = () => {
   return useMutation({
     mutationFn: async (loginDto: UserLoginDto) => {
       const { data } = await axios.post("/api/oauth/login", loginDto);
-      console.log(data.accessToken);
       localStorage.setItem("access_token", data.accessToken);
-      axios.defaults.headers["access_token"] = data.accessToken;
+      axios.defaults.headers["access_token"] = data.access_token;
     },
   });
 };

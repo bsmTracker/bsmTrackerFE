@@ -6,12 +6,15 @@ import tw from "tailwind-styled-components";
 import { useSearchTrackQuery } from "@/query/playlist";
 import { useSaveTrackMutation } from "@/query/track";
 import { LoadingCo } from "../global";
+import { ModalUI } from "../globalStyle";
 
 const SearchTrackModal = ({
   playlistId,
+  open,
   close,
 }: {
   playlistId: number;
+  open: boolean;
   close: any;
 }) => {
   const [inputStr, setInputStr] = useState("");
@@ -66,47 +69,49 @@ const SearchTrackModal = ({
   };
 
   return (
-    <SearchTrackUI>
-      <ModalExplainText>트랙 추가</ModalExplainText>
-      <SearchGroupUI>
-        <SearchInputUI
-          value={inputStr}
-          onChange={searchInputHandler}
-          placeholder="원하는 음악명을 입력해주세요"
-        />
-        <SearchBtnUI onClick={searchBtnHandler}>검색</SearchBtnUI>
-      </SearchGroupUI>
-      {searchTrackQuery.isLoading && <p>로딩중</p>}
-      <SearchedTrackScrollWrapperUI>
-        {searchedTracks?.map(
-          (searchedTrack: SearchedTrackType, idx: number) => {
-            const selectedStatus = selectedTrack?.code === searchedTrack.code;
-            return (
-              <SearchedTrack
-                key={searchedTrack.code}
-                searchedTrack={searchedTrack}
-                selected={selectedStatus}
-                onClick={() => {
-                  console.log("d");
-                  searchedTrackClickHandler(searchedTrack);
-                }}
-              />
-            );
-          }
+    <ModalUI open={open}>
+      <SearchTrackUI>
+        <ModalExplainText>트랙 추가</ModalExplainText>
+        <SearchGroupUI>
+          <SearchInputUI
+            value={inputStr}
+            onChange={searchInputHandler}
+            placeholder="원하는 음악명을 입력해주세요"
+          />
+          <SearchBtnUI onClick={searchBtnHandler}>검색</SearchBtnUI>
+        </SearchGroupUI>
+        {searchTrackQuery.isLoading && <p>로딩중</p>}
+        <SearchedTrackScrollWrapperUI>
+          {searchedTracks?.map(
+            (searchedTrack: SearchedTrackType, idx: number) => {
+              const selectedStatus = selectedTrack?.code === searchedTrack.code;
+              return (
+                <SearchedTrack
+                  key={searchedTrack.code}
+                  searchedTrack={searchedTrack}
+                  selected={selectedStatus}
+                  onClick={() => {
+                    console.log("d");
+                    searchedTrackClickHandler(searchedTrack);
+                  }}
+                />
+              );
+            }
+          )}
+        </SearchedTrackScrollWrapperUI>
+        {selectedTrack && (
+          <SearchedTrackBtnGroupUI>
+            <SearchedTrackBtnUI onClick={saveSelectedTrackBtnHandler}>
+              ♫ 저장
+            </SearchedTrackBtnUI>
+            <SearchedTrackBtnUI onClick={listenSelectedTrackBtnHandler}>
+              👂 미리듣기
+            </SearchedTrackBtnUI>
+          </SearchedTrackBtnGroupUI>
         )}
-      </SearchedTrackScrollWrapperUI>
-      {selectedTrack && (
-        <SearchedTrackBtnGroupUI>
-          <SearchedTrackBtnUI onClick={saveSelectedTrackBtnHandler}>
-            ♫ 저장
-          </SearchedTrackBtnUI>
-          <SearchedTrackBtnUI onClick={listenSelectedTrackBtnHandler}>
-            👂 미리듣기
-          </SearchedTrackBtnUI>
-        </SearchedTrackBtnGroupUI>
-      )}
-      <LoadingCo isLoading={saveTrackMutation.isLoading} />
-    </SearchTrackUI>
+        <LoadingCo isLoading={saveTrackMutation.isLoading} />
+      </SearchTrackUI>
+    </ModalUI>
   );
 };
 

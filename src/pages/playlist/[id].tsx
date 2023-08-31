@@ -12,7 +12,6 @@ import {
 } from "@/query/playlist";
 import { useSortTrackMutation } from "@/query/track";
 import tw from "tailwind-styled-components";
-import { ModalUI } from "@/Components/globalStyle";
 
 const PlaylistDetail = () => {
   const router = useRouter();
@@ -23,8 +22,8 @@ const PlaylistDetail = () => {
   const playlistDetailQuery = usePlaylistDetailQuery(playlistId);
 
   const playlist = useMemo(() => {
-    return playlistDetailQuery.data;
-  }, [playlistDetailQuery.data]);
+    return playlistDetailQuery?.data;
+  }, [playlistDetailQuery?.data, playlistId]);
 
   const sortTrackMutation = useSortTrackMutation(playlistId);
   const deletePlaylistMutation = useDeletePlaylistMutation(playlistId);
@@ -120,7 +119,6 @@ const PlaylistDetail = () => {
           <IconWrapperUI>
             <CreateIcon onClick={() => setAddTrackModal(true)} />
             <DeleteIcon onClick={deletBtnHandler} />
-            {/* <SettingIcon onClick={() => {}} /> */}
           </IconWrapperUI>
         </PlaylistInfoUI>
         <PlaylistTrackListWrapperUI>
@@ -138,12 +136,11 @@ const PlaylistDetail = () => {
           })}
         </PlaylistTrackListWrapperUI>
       </PlaylistUI>
-      <ModalUI open={addTrackModal} onClose={() => setAddTrackModal(false)}>
-        <SearchTrack
-          playlistId={playlistId}
-          close={() => setAddTrackModal(false)}
-        />
-      </ModalUI>
+      <SearchTrack
+        open={addTrackModal}
+        playlistId={playlistId}
+        close={() => setAddTrackModal(false)}
+      />
     </div>
   );
 };

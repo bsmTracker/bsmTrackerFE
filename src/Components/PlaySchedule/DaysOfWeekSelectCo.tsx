@@ -10,10 +10,10 @@ export const DaysOfWeekSelectCo = ({
   const days = ["일", "월", "화", "수", "목", "금", "토"];
 
   const clickHandler = (index: number) => {
-    const isSelected = selectedDays.includes(index);
+    const isSelected = selectedDays?.includes(index) || [];
     if (isSelected) {
       setSelectedDays(
-        selectedDays.filter((selectedDay) => selectedDay !== index)
+        selectedDays?.filter((selectedDay) => selectedDay !== index)
       );
     } else {
       setSelectedDays([...selectedDays, index]);
@@ -30,7 +30,7 @@ export const DaysOfWeekSelectCo = ({
             onClick={() => {
               clickHandler(index);
             }}
-            isSelected={isSelected}
+            isselected={String(isSelected)}
           >
             {day}
           </DayBtnUI>
@@ -42,7 +42,7 @@ export const DaysOfWeekSelectCo = ({
 
 const RowUI = tw.div`flex flex-row gap-2`;
 
-const DayBtnUI = tw.div<{ isSelected: boolean }>`${({ isSelected }) =>
-  isSelected
+const DayBtnUI = tw.div`${({ isselected }: { isselected: string }) =>
+  isselected === "true"
     ? "bg-black text-white"
     : "bg-[#f3f3f3] text-black"} flex justify-center items-center w-[50px] h-[50px] p-[10px] rounded-[30px] cursor-pointer`;

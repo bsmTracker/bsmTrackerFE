@@ -2,7 +2,7 @@ import { useSpeakerMutation } from "@/query/speaker";
 import { useLogoutMutation, useUserQuery } from "@/query/user";
 import { speakerSocket } from "@/socket/speaker";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 
 export const Header = () => {
@@ -10,9 +10,6 @@ export const Header = () => {
   const logoutMutation = useLogoutMutation();
   const speakerMutation = useSpeakerMutation();
 
-  const user = useMemo(() => {
-    return userQuery.data;
-  }, [userQuery.data]);
   const router = useRouter();
 
   const logoutHandler = async () => {
@@ -24,9 +21,6 @@ export const Header = () => {
   const [volume, setVolume] = useState(0);
 
   useEffect(() => {
-    while (speakerSocket.connected === false) {
-      speakerSocket.connect();
-    }
     if (speakerSocket.connected) {
       speakerSocket.emit("volume");
     }
@@ -50,7 +44,7 @@ export const Header = () => {
       </RowUI>
       <ColUI>
         <UserNameUI onClick={logoutHandler}>
-          {user?.name ?? "로그인하세요"}
+          {userQuery?.data?.name ?? "로그인하세요"}
         </UserNameUI>
         <VolumeInfoWrapper>
           <VolumeInfoP>📢</VolumeInfoP>
