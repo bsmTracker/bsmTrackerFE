@@ -15,7 +15,8 @@ const useUserQuery = () => {
 const useLogoutMutation = () => {
   return useMutation({
     mutationFn: async () => {
-      await axios.post("/api/oauth/logout");
+      localStorage.setItem("access_token", "");
+      location.reload();
     },
   });
 };
