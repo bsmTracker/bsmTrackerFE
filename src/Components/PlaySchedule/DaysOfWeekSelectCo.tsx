@@ -10,7 +10,7 @@ export const DaysOfWeekSelectCo = ({
   const days = ["일", "월", "화", "수", "목", "금", "토"];
 
   const clickHandler = (index: number) => {
-    const isSelected = selectedDays?.includes(index) || [];
+    const isSelected = selectedDays?.includes(index);
     if (isSelected) {
       setSelectedDays(
         selectedDays?.filter((selectedDay) => selectedDay !== index)
