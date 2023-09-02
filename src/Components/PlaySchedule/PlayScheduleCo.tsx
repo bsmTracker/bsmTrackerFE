@@ -1,7 +1,7 @@
 import { PlaySchedule, ScheduleEnum } from "@/types/playSchedule";
 import { Switch } from "@mui/material";
 import { SettingIcon } from "../Icon/SettingIcon";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { overlappingScheduleState } from "../../store/overlappingSchedule";
 import { useRecoilState } from "recoil";
 import {
@@ -9,13 +9,19 @@ import {
   useSetPlayScheduleActiveStatusMutation,
 } from "@/query/playSchedule";
 import tw from "tailwind-styled-components";
-import AddEditPlayScheduleModal from "./AddEditModal";
 
 const days = ["일", "월", "화", "수", "목", "금", "토"];
 
-export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
-  const [editPlayScheduleModal, setEditPlayScheduleModal] = useState(false);
-
+export const PlayScheduleCo = ({
+  schedule,
+  nowPlaying,
+  onClick,
+}: {
+  schedule: PlaySchedule;
+  nowPlaying: boolean;
+  onClick: any;
+}) => {
+  const ref = useRef<any>();
   const togglePlayScheduleStatusMutation =
     useSetPlayScheduleActiveStatusMutation(schedule.id);
 
@@ -29,8 +35,15 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
   const name = schedule.name;
 
   useEffect(() => {
+    if (nowPlaying) {
+      ref.current.scrollIntoView();
+    }
+  }, [nowPlaying]);
+
+  useEffect(() => {
     if (overlappingSchedule?.id === schedule.id) {
-      for (let i = 0; i < 4; i++) {
+      ref.current.scrollIntoView();
+      for (let i = 0; i < 6; i++) {
         setTimeout(() => {
           if (i % 2 === 1) {
             setMark(false);
@@ -43,17 +56,14 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
     }
   }, [overlappingSchedule]);
 
-  const settingClickHandler = () => {
-    setEditPlayScheduleModal(true);
-  };
-
   return (
-    <PlayScheduleCoUI mark={String(mark)}>
+    <PlayScheduleCoUI mark={String(mark || nowPlaying)} ref={ref}>
+      <p>{nowPlaying ? "(현재 재생중)" : ""}</p>
       <BetweenUI>
         <NameUI>
           {schedule.name.length > 10 ? name.substring(0, 10) + ".." : name}
         </NameUI>
-        <SettingIcon onClick={settingClickHandler} />
+        <SettingIcon onClick={onClick} />
       </BetweenUI>
       <ContentUI>
         {schedule.scheduleType === ScheduleEnum.DAYS_OF_WEEK &&
@@ -90,19 +100,11 @@ export const PlayScheduleCo = ({ schedule }: { schedule: PlaySchedule }) => {
         }}
         checked={schedule.active}
       />
-      <AddEditPlayScheduleModal
-        open={editPlayScheduleModal}
-        playSchedule={schedule}
-        type="put"
-        closeModal={() => {
-          setEditPlayScheduleModal(false);
-        }}
-      />
     </PlayScheduleCoUI>
   );
 };
 const PlayScheduleCoUI = tw.div`
-  p-[30px] cursor-pointer w-[280px] rounded-lg
+  p-[30px] cursor-pointer rounded-lg min-w-[280px]
   ${({ mark }: { mark: string }) =>
     mark === "true" ? `bg-white border-black border-[2px]` : `bg-[#F5F5F5]`}
 `;

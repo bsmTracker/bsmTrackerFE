@@ -28,11 +28,7 @@ export const MelodyCo = ({
 
   const removeHandler = async () => {
     if (melody) {
-      await removeAudioMutation.mutateAsync(melody.id, {
-        onSuccess: async () => {
-          setMelody(null);
-        },
-      });
+      setMelody(null);
     }
   };
 

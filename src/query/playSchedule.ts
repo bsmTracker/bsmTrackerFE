@@ -50,8 +50,8 @@ const useDeletePlayScheduleMutation = (playScheduleId?: number) => {
     mutationFn: async () => {
       await axios.delete(`/api/play-schedule/${playScheduleId}`);
     },
-    onSuccess: async () => {
-      await queryClient.refetchQueries(
+    onSettled: async () => {
+      await queryClient.invalidateQueries(
         PLAYSCHEDULE_CACH_KEYS.playScheduleListKey
       );
     },

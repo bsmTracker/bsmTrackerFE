@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAddPlaylistMutation } from "@/query/playlist";
 import tw from "tailwind-styled-components";
 import { ModalUI } from "../globalStyle";
@@ -19,6 +19,10 @@ export const CreatePlaylistModal = ({
     });
     closeModal();
   };
+
+  useEffect(() => {
+    setName("");
+  }, [open]);
 
   return (
     <ModalUI open={open}>

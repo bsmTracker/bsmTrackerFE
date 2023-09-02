@@ -7,6 +7,8 @@ import { useSearchTrackQuery } from "@/query/playlist";
 import { useSaveTrackMutation } from "@/query/track";
 import { LoadingCo } from "../global";
 import { ModalUI } from "../globalStyle";
+import { useQueryClient } from "react-query";
+import { PLAYLIST_CACHE_KEYS } from "@/query/queryKey";
 
 const SearchTrackModal = ({
   playlistId,
@@ -26,6 +28,8 @@ const SearchTrackModal = ({
 
   const searchTrackQuery = useSearchTrackQuery(playlistId, keyword);
   const saveTrackMutation = useSaveTrackMutation(playlistId);
+
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     searchTrackQuery.refetch();
@@ -58,10 +62,16 @@ const SearchTrackModal = ({
   };
   const saveSelectedTrackBtnHandler = async () => {
     if (selectedTrack) {
-      await saveTrackMutation.mutateAsync(selectedTrack.code);
-      close();
+      await saveTrackMutation.mutateAsync(selectedTrack.code, {
+        onSuccess: async () => {
+          await queryClient.invalidateQueries(
+            PLAYLIST_CACHE_KEYS.searchKey(playlistId)
+          );
+        },
+      });
     }
   };
+
   const listenSelectedTrackBtnHandler = () => {
     if (selectedTrack) {
       window.open("https://youtube.com/watch?v=" + selectedTrack.code);
@@ -91,7 +101,6 @@ const SearchTrackModal = ({
                   searchedTrack={searchedTrack}
                   selected={selectedStatus}
                   onClick={() => {
-                    console.log("d");
                     searchedTrackClickHandler(searchedTrack);
                   }}
                 />
@@ -99,16 +108,19 @@ const SearchTrackModal = ({
             }
           )}
         </SearchedTrackScrollWrapperUI>
-        {selectedTrack && (
-          <SearchedTrackBtnGroupUI>
-            <SearchedTrackBtnUI onClick={saveSelectedTrackBtnHandler}>
-              ♫ 저장
-            </SearchedTrackBtnUI>
-            <SearchedTrackBtnUI onClick={listenSelectedTrackBtnHandler}>
-              👂 미리듣기
-            </SearchedTrackBtnUI>
-          </SearchedTrackBtnGroupUI>
-        )}
+        <SearchedTrackBtnGroupUI>
+          {selectedTrack && (
+            <>
+              <SearchedTrackBtnUI onClick={saveSelectedTrackBtnHandler}>
+                ♫ 저장
+              </SearchedTrackBtnUI>
+              <SearchedTrackBtnUI onClick={listenSelectedTrackBtnHandler}>
+                👂 미리듣기
+              </SearchedTrackBtnUI>
+            </>
+          )}
+          <SearchedTrackBtnUI onClick={() => close()}>닫기</SearchedTrackBtnUI>
+        </SearchedTrackBtnGroupUI>
         <LoadingCo isLoading={saveTrackMutation.isLoading} />
       </SearchTrackUI>
     </ModalUI>

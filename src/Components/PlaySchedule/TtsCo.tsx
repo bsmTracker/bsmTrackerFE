@@ -6,7 +6,6 @@ import tw from "tailwind-styled-components";
 
 export const TTSCo = ({ setTTS, tts }: { setTTS: any; tts?: Tts | null }) => {
   const addTtsMutation = useAddTtsMutation();
-  const removeTtsMutation = useRemoveTtsMutation();
 
   const [content, setContent] = useState(tts?.content ?? "");
 
@@ -29,9 +28,7 @@ export const TTSCo = ({ setTTS, tts }: { setTTS: any; tts?: Tts | null }) => {
     if (tts) {
       const content = tts?.content ?? "";
       setContent(content);
-      await removeTtsMutation.mutateAsync(tts.id, {
-        onSuccess: () => setTTS(null),
-      });
+      setTTS(null);
     }
   };
 

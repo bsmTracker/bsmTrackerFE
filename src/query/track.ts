@@ -11,7 +11,7 @@ const useSaveTrackMutation = (playlistId: number) => {
         playlistId,
         code,
       }),
-    onSuccess: async () => {
+    onSettled: async () => {
       await queryClient.invalidateQueries(
         PLAYLIST_CACHE_KEYS.playlistDetailKey(playlistId)
       );
@@ -27,7 +27,7 @@ const useUnSaveTrackMutation = (playlistId: number) => {
         playlistId,
         code,
       }),
-    onSuccess: async () => {
+    onSettled: async () => {
       await queryClient.invalidateQueries(
         PLAYLIST_CACHE_KEYS.playlistDetailKey(playlistId)
       );
@@ -41,7 +41,7 @@ const useSortTrackMutation = (playlistId: number) => {
     mutationFn: async (data: { fromIndex: number; toIndex: number }) => {
       await axios.post("/api/track/changeTrackOrder", { ...data, playlistId });
     },
-    onSuccess: async () => {
+    onSettled: async () => {
       await queryClient.invalidateQueries(
         PLAYLIST_CACHE_KEYS.playlistDetailKey(playlistId)
       );

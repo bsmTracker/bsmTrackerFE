@@ -44,16 +44,20 @@ export type PlayScheduleDto = {
   volume: number;
 } & PlayScheduleTimeDto;
 
-export type PlayScheduleTimeDto = {
-  scheduleType: ScheduleEnum;
-
-  startTime: Time;
-
-  endTime: Time;
-
-  startDate: string;
-
-  endDate: string;
-
-  daysOfWeek: number[];
-};
+export type PlayScheduleTimeDto =
+  | {
+      scheduleType: ScheduleEnum;
+      startTime: Time;
+      endTime: Time;
+      startDate: string;
+      endDate: string;
+      daysOfWeek: number[];
+    }
+  | {
+      scheduleType: ScheduleEnum;
+      startTime: Time;
+      endTime: Time;
+      startDate?: string;
+      endDate?: string;
+      daysOfWeek: number[];
+    };

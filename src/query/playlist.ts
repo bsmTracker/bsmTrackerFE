@@ -46,7 +46,7 @@ const useAddPlaylistMutation = () => {
   return useMutation({
     mutationFn: async (data: { name: string }) =>
       await axios.post("/api/playlist", data),
-    onSuccess: async () => {
+    onSettled: async () => {
       await queryClient.invalidateQueries(PLAYLIST_CACHE_KEYS.playlistListKey);
     },
   });
@@ -58,7 +58,7 @@ const useDeletePlaylistMutation = (playlistId: number) => {
     mutationFn: async (_: null) => {
       await axios.delete(`/api/playlist/${playlistId}`);
     },
-    onSuccess: async () => {
+    onSettled: async () => {
       await queryClient.invalidateQueries(PLAYLIST_CACHE_KEYS.playlistListKey);
     },
   });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {
   PlaySchedule,
@@ -23,11 +23,11 @@ import {
   useDeletePlayScheduleMutation,
   useEditPlayScheduleMutation,
 } from "@/query/playSchedule";
-import { useRemoveAudioMutation } from "@/query/audio";
-import { useRemoveTtsMutation } from "@/query/tts";
 import { ModalUI } from "../globalStyle";
+import { useRemoveTtsMutation } from "@/query/tts";
+import { useRemoveAudioMutation } from "@/query/audio";
 
-export const AddEditPlayScheduleModal = ({
+const AddEditPlayScheduleModal = ({
   closeModal,
   playSchedule,
   type,
@@ -38,49 +38,95 @@ export const AddEditPlayScheduleModal = ({
   playSchedule?: PlaySchedule;
   type: "post" | "put";
 }) => {
-  const [scheduleType, setScheduleType] = useState(
-    playSchedule?.scheduleType || ScheduleEnum.EVENT
-  );
   const date = new Date();
   let offset = date.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
   let dateOffset = new Date(date.getTime() - offset).toISOString();
-  const today = dateOffset.substring(0, 10);
-  const [daysOfWeek, setDaysOfWeek] = useState(playSchedule?.daysOfWeek || [1]);
-  const [startDateStr, setStartDateStr] = useState(
-    playSchedule?.startDate || today
-  );
-  const [endDateStr, setEndDateStr] = useState(playSchedule?.endDate || today);
-  const [startTime, setStartTime] = useState<Time>(
-    playSchedule?.startTime || {
-      hour: 6,
-      minute: 0,
-      second: 0,
-    }
-  );
-  const [endTime, setEndTime] = useState<Time>(
-    playSchedule?.endTime || {
-      hour: 6,
-      minute: 20,
-      second: 0,
-    }
-  );
+  const defaultDate = dateOffset.substring(0, 10);
+  const defaultTime = {
+    hour: 6,
+    minute: 20,
+    second: 0,
+  };
 
-  const [scheduleName, setScheduleName] = useState(playSchedule?.name || "");
-  const [melody, setMelody] = useState<Audio | null>(
-    playSchedule?.startMelody || null
+  const [scheduleType, setScheduleType] = useState<ScheduleEnum>(
+    ScheduleEnum.EVENT
   );
-  const [tts, setTts] = useState<Tts | null>(playSchedule?.tts || null);
-  const [selectedPlaylist, setSelectedPlaylist] = useState<Playlist | null>(
-    playSchedule?.playlist || null
-  );
-  const [volume, setVolume] = useState(playSchedule?.volume || 25);
+  const [daysOfWeek, setDaysOfWeek] = useState<number[]>([]);
+  const [startDateStr, setStartDateStr] = useState<string>(defaultDate);
+  const [endDateStr, setEndDateStr] = useState<string>(defaultDate);
+  const [startTime, setStartTime] = useState<Time>(defaultTime);
+  const [endTime, setEndTime] = useState<Time>(defaultTime);
+  const [scheduleName, setScheduleName] = useState<string>("");
+  const [melody, setMelody] = useState<Audio | null>(null);
+  const [tts, setTts] = useState<Tts | null>(null);
+  const [playlist, setPlaylist] = useState<Playlist | null>(null);
+  const [volume, setVolume] = useState<number>(25);
   const addPlayScheduleMutation = useAddPlayScheduleMutation();
   const editPlayScheduleMutation = useEditPlayScheduleMutation(
     playSchedule?.id
   );
-  const deleteMutation = useDeletePlayScheduleMutation(playSchedule?.id);
-  const removeAudioMutation = useRemoveAudioMutation();
   const removeTtsMutation = useRemoveTtsMutation();
+  const removeMelodyMutation = useRemoveAudioMutation();
+
+  const [melodyHistories, setMelodyHistories] = useState<Audio[]>([]);
+  const [ttsHistories, setTtsHistories] = useState<Tts[]>([]);
+  const deleteMutation = useDeletePlayScheduleMutation(playSchedule?.id);
+
+  useEffect(() => {
+    if (type === "put") {
+      if (playSchedule) {
+        setScheduleType(playSchedule?.scheduleType);
+        if (playSchedule.scheduleType === ScheduleEnum.DAYS_OF_WEEK) {
+          setDaysOfWeek(playSchedule.daysOfWeek);
+        }
+        if (playSchedule.scheduleType === ScheduleEnum.EVENT) {
+          setStartDateStr(playSchedule.startDate);
+          setEndDateStr(playSchedule.endDate);
+        }
+        setScheduleName(playSchedule.name);
+        setStartTime(playSchedule.startTime);
+        setEndTime(playSchedule.endTime);
+        setMelody(playSchedule.startMelody);
+        setTts(playSchedule.tts);
+        setPlaylist(playSchedule.playlist);
+        setVolume(playSchedule.volume);
+      }
+    }
+    if (type === "post") {
+      setScheduleType(ScheduleEnum.EVENT);
+      setDaysOfWeek([]);
+      setStartDateStr(defaultDate);
+      setEndDateStr(defaultDate);
+      setScheduleName("");
+      setStartTime(defaultTime);
+      setEndTime(defaultTime);
+      setMelody(null);
+      setTts(null);
+      setPlaylist(null);
+      setVolume(25);
+    }
+  }, [open, type]);
+
+  const preventClose = async (e: BeforeUnloadEvent) => {
+    e.preventDefault();
+    e.returnValue = "";
+    if (!open) return;
+    await cancelHandler();
+  };
+
+  const preventGoBack = async () => {
+    if (!open) return;
+    await cancelHandler();
+  };
+
+  useEffect(() => {
+    window.addEventListener("popstate", preventGoBack);
+    window.addEventListener("beforeunload", preventClose);
+    return () => {
+      window.removeEventListener("beforeunload", preventClose);
+      window.removeEventListener("popstate", preventGoBack);
+    };
+  }, [open, ttsHistories, melodyHistories]);
 
   const submitHandler = async () => {
     const scheduleData: PlayScheduleDto = {
@@ -93,9 +139,16 @@ export const AddEditPlayScheduleModal = ({
       endDate: endDateStr,
       startMelodyId: melody?.id ?? null,
       ttsId: tts?.id ?? null,
-      playlistId: selectedPlaylist?.id ?? null,
+      playlistId: playlist?.id ?? null,
       volume: volume,
     };
+    if (scheduleType === ScheduleEnum.DAYS_OF_WEEK) {
+      scheduleData.startDate = undefined;
+      scheduleData.endDate = undefined;
+    }
+    if (scheduleType === ScheduleEnum.EVENT) {
+      scheduleData.daysOfWeek = [];
+    }
 
     if (!scheduleData.name) {
       toast("스케쥴 명을 입력하세요");
@@ -125,27 +178,64 @@ export const AddEditPlayScheduleModal = ({
         return;
       }
     }
-    if (playSchedule && type == "put") {
-      await editPlayScheduleMutation.mutateAsync(scheduleData);
-    } else {
-      await addPlayScheduleMutation.mutateAsync(scheduleData);
-    }
-    closeModal();
+    ttsHistories?.map(async (ttsHistory) => {
+      if (ttsHistory.id !== tts?.id) {
+        await removeTtsMutation.mutateAsync(ttsHistory.id);
+      }
+    });
+    melodyHistories?.map(async (melodyHistory) => {
+      if (melodyHistory.id !== melody?.id) {
+        await removeTtsMutation.mutateAsync(melodyHistory.id);
+      }
+    });
+    try {
+      if (playSchedule && type == "put") {
+        await editPlayScheduleMutation.mutateAsync(scheduleData);
+      } else {
+        await addPlayScheduleMutation.mutateAsync(scheduleData);
+      }
+      closeModal();
+    } catch (e) {}
   };
 
   const deleteHandler = async () => {
+    ttsHistories?.map(async (ttsHistory) => {
+      await removeTtsMutation.mutateAsync(ttsHistory.id);
+    });
+    melodyHistories?.map(async (melodyHistories) => {
+      await removeMelodyMutation.mutateAsync(melodyHistories.id);
+    });
+    setTtsHistories([]);
+    setMelodyHistories([]);
     await deleteMutation.mutateAsync();
     closeModal();
   };
 
   const cancelHandler = async () => {
-    if (tts) {
-      await removeTtsMutation.mutateAsync(tts.id);
-    }
-    if (melody) {
-      await removeAudioMutation.mutateAsync(melody.id);
-    }
+    console.log(ttsHistories);
+    console.log(melodyHistories);
+    ttsHistories?.map(async (ttsHistory) => {
+      await removeTtsMutation.mutateAsync(ttsHistory.id);
+    });
+    melodyHistories?.map(async (melodyHistories) => {
+      await removeMelodyMutation.mutateAsync(melodyHistories.id);
+    });
+    setTtsHistories([]);
+    setMelodyHistories([]);
     closeModal();
+  };
+
+  const setTtsHandler = (ttsData: Tts | null) => {
+    if (ttsData !== null && ttsData.id !== playSchedule?.ttsId) {
+      setTtsHistories([...ttsHistories, ttsData]);
+    }
+    setTts(ttsData);
+  };
+  const setMelodyHandler = (melodyData: Audio | null) => {
+    if (melodyData !== null && melodyData.id !== playSchedule?.startMelodyId) {
+      setMelodyHistories([...melodyHistories, melodyData]);
+    }
+    setMelody(melodyData);
   };
 
   const volumeChangeHandler = (e: any) => setVolume(Number(e.target.value));
@@ -197,11 +287,11 @@ export const AddEditPlayScheduleModal = ({
         </PlayScheduleDataGroupUI>
         <PlayScheduleDataGroupUI>
           <ExplainText>재생정보</ExplainText>
-          <MelodyCo melody={melody} setMelody={setMelody} />
-          <TTSCo tts={tts} setTTS={setTts} />
+          <MelodyCo melody={melody} setMelody={setMelodyHandler} />
+          <TTSCo tts={tts} setTTS={setTtsHandler} />
           <PlaylistSelectCo
-            selectedPlaylist={selectedPlaylist}
-            setSelectedPlaylist={setSelectedPlaylist}
+            selectedPlaylist={playlist}
+            setSelectedPlaylist={setPlaylist}
           />
           <RowGapUI>
             <p className="w-[110px]"> 볼륨 : {volume}%</p>
@@ -216,9 +306,9 @@ export const AddEditPlayScheduleModal = ({
         </PlayScheduleDataGroupUI>
         <PlayScheduleBtnWrapperUI>
           <ButtonUI onClick={submitHandler}>
-            {type == "put" ? "닫기" : "추가"}
+            {type == "put" ? "저장" : "추가"}
           </ButtonUI>
-          {type == "post" && <ButtonUI onClick={cancelHandler}>취소</ButtonUI>}
+          <ButtonUI onClick={cancelHandler}>취소</ButtonUI>
           {type == "put" && <ButtonUI onClick={deleteHandler}>삭제</ButtonUI>}
         </PlayScheduleBtnWrapperUI>
       </AddEditPlayScheduleModalUI>

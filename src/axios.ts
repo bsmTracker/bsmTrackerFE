@@ -24,18 +24,14 @@ const responseErrorInterceptors = async (errorResponse: any) => {
         location.href = "/login";
       }, 1000)
     );
-    return;
   } else if (response?.status === RESPONSE.STATUS.FORBIDDEN) {
     toast("해당 작업은 권한에 맞는 작업이 아닙니다.");
-    return;
   } else if (response?.status !== RESPONSE.STATUS.OK) {
     if (response?.data?.message) {
       toast(response?.data?.message);
-    } else {
-      throw errorResponse;
     }
-    return;
   }
+  return Promise.reject(errorResponse);
 };
 
 function requestInterceptors(config: any) {
