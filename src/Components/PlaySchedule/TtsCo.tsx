@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Tts } from "@/types/tts";
 import { DeleteIcon } from "../Icon/DeleteIcon";
-import { useAddTtsMutation, useRemoveTtsMutation } from "@/query/tts";
+import { useAddTtsMutation } from "@/query/tts";
 import tw from "tailwind-styled-components";
 
 export const TTSCo = ({ setTTS, tts }: { setTTS: any; tts?: Tts | null }) => {
   const addTtsMutation = useAddTtsMutation();
-
   const [content, setContent] = useState(tts?.content ?? "");
 
   const registerHandler = async () => {
@@ -24,10 +23,10 @@ export const TTSCo = ({ setTTS, tts }: { setTTS: any; tts?: Tts | null }) => {
       }
     );
   };
+
   const removeBtnHandler = async () => {
     if (tts) {
-      const content = tts?.content ?? "";
-      setContent(content);
+      setContent("");
       setTTS(null);
     }
   };

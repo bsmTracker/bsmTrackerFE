@@ -68,8 +68,8 @@ const AddEditPlayScheduleModal = ({
   const removeTtsMutation = useRemoveTtsMutation();
   const removeMelodyMutation = useRemoveAudioMutation();
 
-  const [melodyHistories, setMelodyHistories] = useState<Audio[]>([]);
-  const [ttsHistories, setTtsHistories] = useState<Tts[]>([]);
+  const [melodyHistory, setMelodyHistory] = useState<Audio | null>(null);
+  const [ttsHistory, setTtsHistory] = useState<Tts | null>(null);
   const deleteMutation = useDeletePlayScheduleMutation(playSchedule?.id);
 
   useEffect(() => {
@@ -126,7 +126,7 @@ const AddEditPlayScheduleModal = ({
       window.removeEventListener("beforeunload", preventClose);
       window.removeEventListener("popstate", preventGoBack);
     };
-  }, [open, ttsHistories, melodyHistories]);
+  }, [ttsHistory, melodyHistory, open]);
 
   const submitHandler = async () => {
     const scheduleData: PlayScheduleDto = {
@@ -178,16 +178,6 @@ const AddEditPlayScheduleModal = ({
         return;
       }
     }
-    ttsHistories?.map(async (ttsHistory) => {
-      if (ttsHistory.id !== tts?.id) {
-        await removeTtsMutation.mutateAsync(ttsHistory.id);
-      }
-    });
-    melodyHistories?.map(async (melodyHistory) => {
-      if (melodyHistory.id !== melody?.id) {
-        await removeTtsMutation.mutateAsync(melodyHistory.id);
-      }
-    });
     try {
       if (playSchedule && type == "put") {
         await editPlayScheduleMutation.mutateAsync(scheduleData);
@@ -199,49 +189,59 @@ const AddEditPlayScheduleModal = ({
   };
 
   const deleteHandler = async () => {
-    ttsHistories?.map(async (ttsHistory) => {
+    if (ttsHistory) {
       await removeTtsMutation.mutateAsync(ttsHistory.id);
-    });
-    melodyHistories?.map(async (melodyHistories) => {
-      await removeMelodyMutation.mutateAsync(melodyHistories.id);
-    });
-    setTtsHistories([]);
-    setMelodyHistories([]);
+    }
+    if (melodyHistory) {
+      await removeMelodyMutation.mutateAsync(melodyHistory.id);
+    }
     await deleteMutation.mutateAsync();
     closeModal();
   };
 
   const cancelHandler = async () => {
-    console.log(ttsHistories);
-    console.log(melodyHistories);
-    ttsHistories?.map(async (ttsHistory) => {
+    console.log(ttsHistory);
+    console.log(melodyHistory);
+    if (ttsHistory) {
       await removeTtsMutation.mutateAsync(ttsHistory.id);
-    });
-    melodyHistories?.map(async (melodyHistories) => {
-      await removeMelodyMutation.mutateAsync(melodyHistories.id);
-    });
-    setTtsHistories([]);
-    setMelodyHistories([]);
+    }
+    if (melodyHistory) {
+      await removeMelodyMutation.mutateAsync(melodyHistory.id);
+    }
+    setTtsHistory(null);
+    setMelodyHistory(null);
     closeModal();
   };
 
-  const setTtsHandler = (ttsData: Tts | null) => {
-    if (ttsData !== null && ttsData.id !== playSchedule?.ttsId) {
-      setTtsHistories([...ttsHistories, ttsData]);
-    }
+  const setTtsHandler = async (ttsData: Tts | null) => {
     setTts(ttsData);
-  };
-  const setMelodyHandler = (melodyData: Audio | null) => {
-    if (melodyData !== null && melodyData.id !== playSchedule?.startMelodyId) {
-      setMelodyHistories([...melodyHistories, melodyData]);
+    if (ttsHistory) {
+      await removeTtsMutation.mutateAsync(ttsHistory.id);
     }
+    if (ttsData !== null && ttsData.id !== playSchedule?.ttsId) {
+      setTtsHistory(ttsData);
+    }
+    if (ttsData === null) {
+      setTtsHistory(null);
+    }
+  };
+  const setMelodyHandler = async (melodyData: Audio | null) => {
     setMelody(melodyData);
+    if (melodyHistory) {
+      await removeMelodyMutation.mutateAsync(melodyHistory.id);
+    }
+    if (melodyData !== null && melodyData.id !== playSchedule?.startMelodyId) {
+      setMelodyHistory(melodyData);
+    }
+    if (melodyData === null) {
+      setMelodyHistory(null);
+    }
   };
 
   const volumeChangeHandler = (e: any) => setVolume(Number(e.target.value));
 
   return (
-    <ModalUI open={open}>
+    <ModalUI open={open} onClose={cancelHandler}>
       <AddEditPlayScheduleModalUI>
         <PlayScheduleDataGroupUI>
           <ExplainText>스케쥴 명</ExplainText>
