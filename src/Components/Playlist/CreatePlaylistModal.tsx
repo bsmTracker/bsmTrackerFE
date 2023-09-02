@@ -25,7 +25,7 @@ export const CreatePlaylistModal = ({
   }, [open]);
 
   return (
-    <ModalUI open={open}>
+    <ModalUI open={open} onClose={closeModal}>
       <CreatePlaylistUI>
         <ModalExplainUI>재생목록 추가</ModalExplainUI>
         <InputUI

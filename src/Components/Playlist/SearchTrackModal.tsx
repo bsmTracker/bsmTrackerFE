@@ -79,7 +79,7 @@ const SearchTrackModal = ({
   };
 
   return (
-    <ModalUI open={open}>
+    <ModalUI open={open} onClose={close}>
       <SearchTrackUI>
         <ModalExplainText>트랙 추가</ModalExplainText>
         <SearchGroupUI>
@@ -119,7 +119,7 @@ const SearchTrackModal = ({
               </SearchedTrackBtnUI>
             </>
           )}
-          <SearchedTrackBtnUI onClick={() => close()}>닫기</SearchedTrackBtnUI>
+          <SearchedTrackBtnUI onClick={close}>닫기</SearchedTrackBtnUI>
         </SearchedTrackBtnGroupUI>
         <LoadingCo isLoading={saveTrackMutation.isLoading} />
       </SearchTrackUI>

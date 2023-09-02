@@ -1,5 +1,6 @@
 import { SearchedTrack } from "@/types/track";
 import tw from "tailwind-styled-components";
+import Marquee from "react-fast-marquee";
 
 const SearchedTrackCo = ({
   searchedTrack,
@@ -10,10 +11,29 @@ const SearchedTrackCo = ({
   selected: boolean;
   onClick: any;
 }) => {
+  const isOverTitleLength = searchedTrack.name.length > 18;
   return (
     <SearchedTrackUI selected={selected} onClick={onClick}>
-      <SearchedTrackImgUI src={searchedTrack.image} />
-      <SearchedTrackInfoTextUI>{searchedTrack.name}</SearchedTrackInfoTextUI>
+      <RowUI>
+        <SearchedTrackImgUI src={searchedTrack.image} />
+        <ColUI>
+          {selected && isOverTitleLength ? (
+            <SearchedTrackInfoTitleUI>
+              <Marquee speed={10} direction={"left"} pauseOnHover={true}>
+                {searchedTrack.name}
+              </Marquee>
+            </SearchedTrackInfoTitleUI>
+          ) : (
+            <SearchedTrackInfoTitleUI>
+              {searchedTrack.name.substring(0, 17)}
+              {isOverTitleLength && "..."}
+            </SearchedTrackInfoTitleUI>
+          )}
+          <SearchedTrackInfoTextUI>
+            {searchedTrack.duration_ms / 1000} 초
+          </SearchedTrackInfoTextUI>
+        </ColUI>
+      </RowUI>
       <SearchedTrackSaveInfoUI saveStatus={searchedTrack.save}>
         저장됨
       </SearchedTrackSaveInfoUI>
@@ -23,14 +43,19 @@ const SearchedTrackCo = ({
 
 const SearchedTrackUI = tw.div<{
   selected: boolean;
-}>`flex flex-row gap-5 cursor-pointer hover:bg-slate-400 ${(props) =>
-  props?.selected ? "border-black border-[2px]" : "border-none"}`;
+}>`flex flex-row justify-between cursor-pointer hover:bg-slate-400 min-h-[50px] ${(
+  props
+) => (props?.selected ? "border-black border-[2px]" : "border-none")}`;
 const SearchedTrackImgUI = tw.img`w-[80px] object-cover `;
-const SearchedTrackInfoTextUI = tw.p``;
+const SearchedTrackInfoTitleUI = tw.p`text-[18px] w-full`;
+const SearchedTrackInfoTextUI = tw.p`text-[12px]`;
+const ColUI = tw.div`flex flex-col`;
+const RowUI = tw.div`flex flex-row gap-2`;
 const SearchedTrackSaveInfoUI = tw(SearchedTrackInfoTextUI)<{
   saveStatus: boolean;
 }>`
-w-[100px] font-bold ${({ saveStatus }) => (saveStatus ? "" : "hidden")}
+w-[100px] font-bold flex flex-row justify-end ${({ saveStatus }) =>
+  saveStatus ? "" : "hidden"}
 `;
 
 export default SearchedTrackCo;
