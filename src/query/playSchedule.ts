@@ -79,9 +79,11 @@ const useSetPlayScheduleActiveStatusMutation = (playScheduleId?: number) => {
 const useFindOverlappingPlayScheduleMutation = (playScheduleId: number) => {
   return useMutation({
     mutationFn: async () => {
-      return await axios.post(
-        `/api/play-schedule/${playScheduleId}/findOverlappingPlaySchedule`
-      );
+      return await axios
+        .post(
+          `/api/play-schedule/${playScheduleId}/findOverlappingPlaySchedule`
+        )
+        .then((res) => res?.data);
     },
   });
 };

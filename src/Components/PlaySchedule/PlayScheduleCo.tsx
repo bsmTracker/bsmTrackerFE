@@ -91,7 +91,7 @@ export const PlayScheduleCo = ({
         onClick={async () => {
           const targetStatus = !schedule.active;
           if (targetStatus === true) {
-            const findedOverlappingPlaySchedule =
+            const findedOverlappingPlaySchedule: PlaySchedule =
               await findOverlappingPlayScheduleMutation.mutateAsync();
             if (findedOverlappingPlaySchedule)
               setOverlappingSchedule(findedOverlappingPlaySchedule);

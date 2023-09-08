@@ -3,5 +3,5 @@ import { atom } from "recoil";
 
 export const overlappingScheduleState = atom<PlaySchedule | null>({
   key: "overlapping_schedule_state",
-  default: null,
+  default: undefined,
 });
