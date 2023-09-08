@@ -79,11 +79,27 @@ const useSetPlayScheduleActiveStatusMutation = (playScheduleId?: number) => {
 const useFindOverlappingPlayScheduleMutation = (playScheduleId: number) => {
   return useMutation({
     mutationFn: async () => {
+      return await axios.post(
+        `/api/play-schedule/${playScheduleId}/findOverlappingPlaySchedule`
+      );
+    },
+  });
+};
+
+const useEmergencyStopPlayScheduleMutation = () => {
+  return useMutation({
+    mutationFn: async () => {
       return axios
-        .post(
-          `/api/play-schedule/${playScheduleId}/findOverlappingPlaySchedule`
-        )
+        .post(`/api/play-schedule/emergencyStop`)
         .then((res) => res?.data);
+    },
+  });
+};
+
+const useBroadCastMutation = () => {
+  return useMutation({
+    mutationFn: async (broadcastDto: { content: string; volume: number }) => {
+      await axios.post("/api/play-schedule/broadcast", broadcastDto);
     },
   });
 };
@@ -95,4 +111,6 @@ export {
   useDeletePlayScheduleMutation,
   useSetPlayScheduleActiveStatusMutation,
   useFindOverlappingPlayScheduleMutation,
+  useEmergencyStopPlayScheduleMutation,
+  useBroadCastMutation,
 };

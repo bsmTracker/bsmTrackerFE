@@ -1,8 +1,8 @@
-import { Manager } from "socket.io-client";
+import { Manager, io } from "socket.io-client";
 
 const manager = new Manager(process.env.NEXT_PUBLIC_SERVER_URL, {
   transports: ["websocket"],
-  autoConnect: true,
+  autoConnect: false,
   reconnection: true,
 });
 

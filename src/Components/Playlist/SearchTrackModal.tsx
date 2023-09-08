@@ -19,21 +19,15 @@ const SearchTrackModal = ({
   open: boolean;
   close: any;
 }) => {
-  const [inputStr, setInputStr] = useState("");
   const [keyword, setKeyword] = useState<string>("");
   const [keywordTimeout, setKeywordTimeout] = useState<any>(null);
   const [selectedTrack, setSelectedTrack] = useState<SearchedTrackType | null>(
     null
   );
-
-  const searchTrackQuery = useSearchTrackQuery(playlistId, keyword);
   const saveTrackMutation = useSaveTrackMutation(playlistId);
+  const searchTrackQuery = useSearchTrackQuery(playlistId, keyword);
 
   const queryClient = useQueryClient();
-
-  useEffect(() => {
-    searchTrackQuery.refetch();
-  }, [keyword]);
 
   const searchedTracks = useMemo(() => {
     if (searchTrackQuery.isLoading) return [];
@@ -41,17 +35,19 @@ const SearchTrackModal = ({
   }, [searchTrackQuery.data, selectedTrack]);
 
   useEffect(() => {
-    if (keywordTimeout) clearTimeout(keywordTimeout);
-    const timeoutO = setTimeout(() => {
+    const timeoutO = setTimeout(async () => {
       setSelectedTrack(null);
-      setKeyword(inputStr);
+      await searchTrackQuery.refetch();
     }, 500);
     setKeywordTimeout(timeoutO);
-  }, [inputStr]);
+    return () => {
+      if (keywordTimeout) clearTimeout(keywordTimeout);
+    };
+  }, [keyword]);
 
   const searchBtnHandler = () => searchTrackQuery.refetch();
   const searchInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputStr(e.target.value);
+    setKeyword(e.target.value);
   };
   const searchedTrackClickHandler = (searchedTrack: SearchedTrackType) => {
     if (selectedTrack?.code === searchedTrack.code) {
@@ -84,7 +80,7 @@ const SearchTrackModal = ({
         <ModalExplainText>트랙 추가</ModalExplainText>
         <SearchGroupUI>
           <SearchInputUI
-            value={inputStr}
+            value={keyword}
             onChange={searchInputHandler}
             placeholder="원하는 음악명을 입력해주세요"
           />

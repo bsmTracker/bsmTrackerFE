@@ -225,6 +225,7 @@ const AddEditPlayScheduleModal = ({
       setTtsHistory(null);
     }
   };
+
   const setMelodyHandler = async (melodyData: Audio | null) => {
     setMelody(melodyData);
     if (melodyHistory) {

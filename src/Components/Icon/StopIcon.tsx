@@ -1,10 +1,10 @@
 import Image from "next/image";
 
-export const PlayIcon = ({ onClick }: { onClick?: any }) => {
+export const StopIcon = ({ onClick }: { onClick?: any }) => {
   return (
     <img
-      alt="play"
-      src={`${process.env.NEXT_PUBLIC_CLIENT_URL}/play.png`}
+      alt="stop"
+      src={`${process.env.NEXT_PUBLIC_CLIENT_URL}/stop.png`}
       className="cursor-pointer"
       width={30}
       height={30}

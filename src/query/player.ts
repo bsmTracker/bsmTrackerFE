@@ -1,14 +1,14 @@
 import axios from "../axios";
 import { useMutation } from "react-query";
 
-const useSpeakerMutation = () => {
+const usePlayerVolumeMutation = () => {
   return useMutation({
     mutationFn: async (volume: number) => {
-      await axios.post("/api/speaker", {
+      await axios.post("/api/player/volume", {
         volume,
       });
     },
   });
 };
 
-export { useSpeakerMutation };
+export { usePlayerVolumeMutation };

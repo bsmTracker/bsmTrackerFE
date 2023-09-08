@@ -25,6 +25,7 @@ const usePlaylistDetailQuery = (playlistId: number) => {
 };
 
 const useSearchTrackQuery = (playlistId: number, keyword: string) => {
+  console.log(keyword, "()");
   return useQuery({
     queryKey: PLAYLIST_CACHE_KEYS.searchKey(playlistId),
     queryFn: async () => {
@@ -32,6 +33,7 @@ const useSearchTrackQuery = (playlistId: number, keyword: string) => {
         q: keyword,
         playlistId,
       });
+      console.log(keyword, "&&&");
       return axios
         .get(`/api/track/search?${queryStr}`)
         .then((res) => res?.data as SearchedTrack[]);
