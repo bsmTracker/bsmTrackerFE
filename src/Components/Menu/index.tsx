@@ -5,16 +5,14 @@ import MornitoringBtn from "./Button/mornitoring";
 import RelayBtn from "./Button/relay";
 import EmergencyStopBtn from "./Button/EmergencyStop";
 import BroadcastBtn from "./Button/broadcast";
+import CalendarBtn from "./Button/Calendar";
 
 const Menu = () => {
   return (
     <MenuWrapperUI>
       <EmergencyStopBtn />
       <BroadcastBtn />
-      <MenuButtonUI>
-        <CalendarIcon />
-        <p>달력</p>
-      </MenuButtonUI>
+      <CalendarBtn />
       <MornitoringBtn />
       <RelayBtn />
       <VolumeBtn />

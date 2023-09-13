@@ -1,36 +1,46 @@
+import { DaysOfWeek } from "@/types/playSchedule";
 import tw from "tailwind-styled-components";
 
 export const DaysOfWeekSelectCo = ({
   selectedDays,
   setSelectedDays,
 }: {
-  selectedDays: number[];
+  selectedDays: DaysOfWeek[];
   setSelectedDays: Function;
 }) => {
   const days = ["일", "월", "화", "수", "목", "금", "토"];
 
   const clickHandler = (index: number) => {
-    const isSelected = selectedDays?.includes(index);
+    const isSelected = selectedDays?.find(
+      (selectedDayObj) => selectedDayObj.day === index
+    );
     if (isSelected) {
       setSelectedDays(
-        selectedDays?.filter((selectedDay) => selectedDay !== index)
+        selectedDays?.filter((selectedDay) => selectedDay.day !== index)
       );
     } else {
-      setSelectedDays([...selectedDays, index]);
+      setSelectedDays([
+        ...selectedDays,
+        {
+          day: index,
+        },
+      ]);
     }
   };
 
   return (
     <RowUI>
       {days.map((day, index) => {
-        const isSelected = selectedDays.includes(index);
+        const isSelected = selectedDays?.find(
+          (selectedDayObj) => selectedDayObj.day === index
+        );
         return (
           <DayBtnUI
             key={index}
             onClick={() => {
               clickHandler(index);
             }}
-            isselected={String(isSelected)}
+            isselected={String(isSelected ? true : false)}
           >
             {day}
           </DayBtnUI>

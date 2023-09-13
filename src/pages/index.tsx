@@ -51,7 +51,7 @@ function Home() {
           <CreateIcon onClick={() => setCreatePlaylistModal(true)} />
         </WrapperHeaderUI>
         <WrapperContentUI>
-          {playlistListQuery?.data?.map((playlist: Playlist) => (
+          {playlistListQuery?.data?.map((playlist) => (
             <PlaylistCo key={playlist.id} playlist={playlist} />
           ))}
         </WrapperContentUI>
@@ -64,14 +64,12 @@ function Home() {
           <CreateIcon onClick={() => setAddPlayScheduleModal(true)} />
         </WrapperHeaderUI>
         <WrapperContentUI>
-          {playScheduleListQuery?.data?.map((schedule: PlaySchedule) => (
+          {playScheduleListQuery?.data?.map((schedule) => (
             <PlayScheduleCo
               key={schedule.id}
               nowPlaying={schedule?.id === nowPlaying?.id}
               schedule={schedule}
-              onClick={() => {
-                setEditPlaySchedule(schedule);
-              }}
+              onClick={() => setEditPlaySchedule(schedule)}
             />
           ))}
         </WrapperContentUI>

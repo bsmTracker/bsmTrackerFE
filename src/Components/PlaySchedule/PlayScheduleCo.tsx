@@ -1,4 +1,4 @@
-import { PlaySchedule, ScheduleEnum } from "@/types/playSchedule";
+import { DaysOfWeek, PlaySchedule, ScheduleEnum } from "@/types/playSchedule";
 import { Switch } from "@mui/material";
 import { SettingIcon } from "../Icon/SettingIcon";
 import { useEffect, useRef, useState } from "react";
@@ -67,7 +67,7 @@ export const PlayScheduleCo = ({
       </BetweenUI>
       <ContentUI>
         {schedule.scheduleType === ScheduleEnum.DAYS_OF_WEEK &&
-          schedule?.daysOfWeek?.sort().map((day: number) => days[day] + " ")}
+          schedule?.daysOfWeek.map((day: DaysOfWeek) => days[day.day] + " ")}
         {schedule.scheduleType === ScheduleEnum.EVENT &&
           `${schedule.startDate} ~ ${schedule.endDate}`}
       </ContentUI>

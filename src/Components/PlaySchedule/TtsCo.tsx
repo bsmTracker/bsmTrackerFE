@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tts } from "@/types/tts";
 import { DeleteIcon } from "../Icon/DeleteIcon";
 import { useAddTtsMutation } from "@/query/tts";
@@ -6,7 +6,11 @@ import tw from "tailwind-styled-components";
 
 export const TTSCo = ({ setTTS, tts }: { setTTS: any; tts?: Tts | null }) => {
   const addTtsMutation = useAddTtsMutation();
-  const [content, setContent] = useState(tts?.content ?? "");
+  const [content, setContent] = useState("");
+
+  useEffect(() => {
+    setContent(tts?.content ?? "");
+  }, [tts]);
 
   const registerHandler = async () => {
     if (!content) {

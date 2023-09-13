@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {
+  DaysOfWeek,
   PlaySchedule,
   PlayScheduleDto,
   ScheduleEnum,
@@ -51,7 +52,7 @@ const AddEditPlayScheduleModal = ({
   const [scheduleType, setScheduleType] = useState<ScheduleEnum>(
     ScheduleEnum.EVENT
   );
-  const [daysOfWeek, setDaysOfWeek] = useState<number[]>([]);
+  const [daysOfWeek, setDaysOfWeek] = useState<DaysOfWeek[]>([]);
   const [startDateStr, setStartDateStr] = useState<string>(defaultDate);
   const [endDateStr, setEndDateStr] = useState<string>(defaultDate);
   const [startTime, setStartTime] = useState<Time>(defaultTime);
@@ -75,6 +76,7 @@ const AddEditPlayScheduleModal = ({
   useEffect(() => {
     if (type === "put") {
       if (playSchedule) {
+        console.log("()", playSchedule);
         setScheduleType(playSchedule?.scheduleType);
         if (playSchedule.scheduleType === ScheduleEnum.DAYS_OF_WEEK) {
           setDaysOfWeek(playSchedule.daysOfWeek);
@@ -105,7 +107,7 @@ const AddEditPlayScheduleModal = ({
       setPlaylist(null);
       setVolume(25);
     }
-  }, [open, type]);
+  }, [open, type, playSchedule]);
 
   const preventClose = async (e: BeforeUnloadEvent) => {
     e.preventDefault();
@@ -200,8 +202,6 @@ const AddEditPlayScheduleModal = ({
   };
 
   const cancelHandler = async () => {
-    console.log(ttsHistory);
-    console.log(melodyHistory);
     if (ttsHistory) {
       await removeTtsMutation.mutateAsync(ttsHistory.id);
     }

@@ -22,7 +22,7 @@ export type PlaySchedule = {
   ttsId: number;
   startDate: string;
   endDate: string;
-  daysOfWeek: number[];
+  daysOfWeek: DaysOfWeek[];
   startTime: Time;
   endTime: Time;
   startTimeSize: number;
@@ -51,7 +51,7 @@ export type PlayScheduleTimeDto =
       endTime: Time;
       startDate: string;
       endDate: string;
-      daysOfWeek: number[];
+      daysOfWeek: DaysOfWeek[];
     }
   | {
       scheduleType: ScheduleEnum;
@@ -59,5 +59,10 @@ export type PlayScheduleTimeDto =
       endTime: Time;
       startDate?: string;
       endDate?: string;
-      daysOfWeek: number[];
+      daysOfWeek: DaysOfWeek[];
     };
+
+export type DaysOfWeek = {
+  playScheduleId: number;
+  day: number;
+};

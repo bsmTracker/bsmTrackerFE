@@ -15,13 +15,13 @@ export const EventSelectCo = ({
   setStartDateStr: any;
   setEndDateStr: any;
 }) => {
-  const [startDate, setStartDate] = useState(new Date(startDateStr));
-  const [endDate, setEndDate] = useState(new Date(endDateStr));
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
   useEffect(() => {
-    setStartDateStr(startDate.toISOString().substring(0, 10));
-    setEndDateStr(endDate.toISOString().substring(0, 10));
-  }, [startDate, endDate]);
+    setStartDate(new Date(startDateStr));
+    setEndDate(new Date(endDateStr));
+  }, [startDateStr, endDateStr]);
 
   return (
     <EventSelectCoUI>
@@ -29,14 +29,18 @@ export const EventSelectCo = ({
         locale="ko"
         selected={startDate}
         dateFormat="yyyy-MM-dd"
-        onChange={(date: any) => setStartDate(date)}
+        onChange={(date: any) =>
+          setStartDateStr(date.toISOString().substring(0, 10))
+        }
       />
       부터
       <DatePickerUI
         locale="ko"
         selected={endDate}
         dateFormat="yyyy-MM-dd"
-        onChange={(date: any) => setEndDate(date)}
+        onChange={(date: any) =>
+          setEndDateStr(date.toISOString().substring(0, 10))
+        }
       />
       까지
     </EventSelectCoUI>
