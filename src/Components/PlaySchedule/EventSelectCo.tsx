@@ -50,7 +50,7 @@ export const EventSelectCo = ({
       <DateBlockListUI>
         {dateList?.map((dateE: DateEntity) => {
           return (
-            <DateBlockUI>
+            <DateBlockUI key={dateE.date}>
               <p>{dateE.date}</p>
               <button
                 className="text-[13px]"
