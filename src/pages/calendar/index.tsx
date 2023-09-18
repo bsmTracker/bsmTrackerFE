@@ -58,7 +58,10 @@ const Calender = () => {
         <div className="grid grid-cols-7">
           {new Array(7).fill(0).map((_, idx) => {
             return (
-              <p className="flex flex-col justify-center items-center text-[20px] font-bold">
+              <p
+                key={idx}
+                className="flex flex-col justify-center items-center text-[20px] font-bold"
+              >
                 {요일[idx]}
               </p>
             );
@@ -79,10 +82,9 @@ const Calender = () => {
                   }
                 }
                 if (playSchedule.scheduleType === ScheduleEnum.EVENT) {
-                  if (playSchedule.startDate > date.string) {
-                    return false;
-                  }
-                  if (playSchedule.endDate < date.string) {
+                  if (
+                    !playSchedule.dateList.find((d) => d.date === date.string)
+                  ) {
                     return false;
                   }
                 }
@@ -95,7 +97,10 @@ const Calender = () => {
                 <DateTextUI>{date.date}일</DateTextUI>
                 {schedules?.map((playSchedule: PlaySchedule) => {
                   return (
-                    <div className="flex flex-row gap-1 items-center">
+                    <div
+                      key={playSchedule.id + "/" + date.string}
+                      className="flex flex-row gap-1 items-center"
+                    >
                       <ExcuteStatus status={playSchedule.active} />
                       <span className="text-[0.9wh]">{playSchedule.name}</span>
                     </div>

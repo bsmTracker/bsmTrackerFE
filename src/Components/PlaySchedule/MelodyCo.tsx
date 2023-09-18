@@ -13,7 +13,6 @@ export const MelodyCo = ({
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const addAudiomutation = useAudioMutation();
-  const removeAudioMutation = useRemoveAudioMutation();
 
   const uploadHandler = async () => {
     if (!inputRef.current?.files) return;
@@ -34,7 +33,7 @@ export const MelodyCo = ({
 
   return (
     <MelodyCoUI>
-      멜로디 :
+      1. 멜로디
       {!melody && (
         <BtnUI onClick={() => inputRef.current?.click()}>♪ Mp3 등록</BtnUI>
       )}

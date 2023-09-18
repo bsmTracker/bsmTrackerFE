@@ -14,6 +14,7 @@ export const DaysOfWeekSelectCo = ({
     const isSelected = selectedDays?.find(
       (selectedDayObj) => selectedDayObj.day === index
     );
+
     if (isSelected) {
       setSelectedDays(
         selectedDays?.filter((selectedDay) => selectedDay.day !== index)

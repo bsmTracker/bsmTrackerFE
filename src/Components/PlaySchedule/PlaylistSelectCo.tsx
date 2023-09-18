@@ -24,7 +24,7 @@ export const PlaylistSelectCo = ({
 
   return (
     <PlaylistSelectCoUI>
-      플레이리스트 선택 :{" "}
+      3. 플레이리스트
       <select value={selectedPlaylist?.id || 0} onChange={changeHandler}>
         <option value={0}>없음</option>
         {playlistListQuery?.data?.map((playlist: Playlist) => {

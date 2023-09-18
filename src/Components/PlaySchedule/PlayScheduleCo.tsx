@@ -69,7 +69,7 @@ export const PlayScheduleCo = ({
         {schedule.scheduleType === ScheduleEnum.DAYS_OF_WEEK &&
           schedule?.daysOfWeek.map((day: DaysOfWeek) => days[day.day] + " ")}
         {schedule.scheduleType === ScheduleEnum.EVENT &&
-          `${schedule.startDate} ~ ${schedule.endDate}`}
+          `${schedule.dateList[0]?.date}외 ${schedule.dateList.length - 1}일`}
       </ContentUI>
       <TimeContentUI>
         시작 : {schedule.startTime.hour}시 {schedule.startTime.minute}분{" "}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import {
+  DateEntity,
   DaysOfWeek,
   PlaySchedule,
   PlayScheduleDto,
@@ -11,7 +12,6 @@ import { Audio } from "@/types/audio";
 import { Tts } from "@/types/tts";
 import { Playlist } from "@/types/playlist";
 import { DaysOfWeekSelectCo } from "@/Components/PlaySchedule/DaysOfWeekSelectCo";
-import { EventSelectCo } from "@/Components/PlaySchedule/EventSelectCo";
 import { TimeSelectCo } from "@/Components/PlaySchedule/TimeSelectCo";
 import { MelodyCo } from "@/Components/PlaySchedule/MelodyCo";
 import { TTSCo } from "@/Components/PlaySchedule/TtsCo";
@@ -27,6 +27,7 @@ import {
 import { ModalUI } from "../globalStyle";
 import { useRemoveTtsMutation } from "@/query/tts";
 import { useRemoveAudioMutation } from "@/query/audio";
+import { EventSelectCo } from "./EventSelectCo";
 
 const AddEditPlayScheduleModal = ({
   closeModal,
@@ -39,10 +40,10 @@ const AddEditPlayScheduleModal = ({
   playSchedule?: PlaySchedule;
   type: "post" | "put";
 }) => {
-  const date = new Date();
-  let offset = date.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
-  let dateOffset = new Date(date.getTime() - offset).toISOString();
-  const defaultDate = dateOffset.substring(0, 10);
+  // const date = new Date();
+  // let offset = date.getTimezoneOffset() * 60000; //ms단위라 60000곱해줌
+  // let dateOffset = new Date(date.getTime() - offset).toISOString();
+  // const defaultDate = dateOffset.substring(0, 10);
   const defaultTime = {
     hour: 6,
     minute: 20,
@@ -53,8 +54,7 @@ const AddEditPlayScheduleModal = ({
     ScheduleEnum.EVENT
   );
   const [daysOfWeek, setDaysOfWeek] = useState<DaysOfWeek[]>([]);
-  const [startDateStr, setStartDateStr] = useState<string>(defaultDate);
-  const [endDateStr, setEndDateStr] = useState<string>(defaultDate);
+  const [dateList, setDateList] = useState<DateEntity[]>([]);
   const [startTime, setStartTime] = useState<Time>(defaultTime);
   const [endTime, setEndTime] = useState<Time>(defaultTime);
   const [scheduleName, setScheduleName] = useState<string>("");
@@ -76,14 +76,14 @@ const AddEditPlayScheduleModal = ({
   useEffect(() => {
     if (type === "put") {
       if (playSchedule) {
-        console.log("()", playSchedule);
         setScheduleType(playSchedule?.scheduleType);
+        setDaysOfWeek([]);
+        setDateList([]);
         if (playSchedule.scheduleType === ScheduleEnum.DAYS_OF_WEEK) {
           setDaysOfWeek(playSchedule.daysOfWeek);
         }
         if (playSchedule.scheduleType === ScheduleEnum.EVENT) {
-          setStartDateStr(playSchedule.startDate);
-          setEndDateStr(playSchedule.endDate);
+          setDateList(playSchedule.dateList);
         }
         setScheduleName(playSchedule.name);
         setStartTime(playSchedule.startTime);
@@ -97,8 +97,7 @@ const AddEditPlayScheduleModal = ({
     if (type === "post") {
       setScheduleType(ScheduleEnum.EVENT);
       setDaysOfWeek([]);
-      setStartDateStr(defaultDate);
-      setEndDateStr(defaultDate);
+      setDateList([]);
       setScheduleName("");
       setStartTime(defaultTime);
       setEndTime(defaultTime);
@@ -135,18 +134,16 @@ const AddEditPlayScheduleModal = ({
       name: scheduleName,
       scheduleType,
       daysOfWeek,
+      dateList,
       startTime,
       endTime,
-      startDate: startDateStr,
-      endDate: endDateStr,
       startMelodyId: melody?.id ?? null,
       ttsId: tts?.id ?? null,
       playlistId: playlist?.id ?? null,
       volume: volume,
     };
     if (scheduleType === ScheduleEnum.DAYS_OF_WEEK) {
-      scheduleData.startDate = undefined;
-      scheduleData.endDate = undefined;
+      scheduleData.dateList = [];
     }
     if (scheduleType === ScheduleEnum.EVENT) {
       scheduleData.daysOfWeek = [];
@@ -169,13 +166,13 @@ const AddEditPlayScheduleModal = ({
       return;
     }
     if (scheduleData.scheduleType === ScheduleEnum.EVENT) {
-      if (!scheduleData.startDate || !scheduleData.endDate) {
-        toast("시작일자와 끝일자를 설정하셔야해요");
+      if (!scheduleData.dateList?.length) {
+        toast("이벤트일을 하나 이상 등록하셔야해요");
         return;
       }
     }
     if (scheduleData.scheduleType === ScheduleEnum.DAYS_OF_WEEK) {
-      if (!scheduleData.daysOfWeek.length) {
+      if (!scheduleData.daysOfWeek?.length) {
         toast("요일을 하나 이상 선택하셔야해요");
         return;
       }
@@ -270,12 +267,7 @@ const AddEditPlayScheduleModal = ({
             />
           )}
           {scheduleType === ScheduleEnum.EVENT && (
-            <EventSelectCo
-              startDateStr={startDateStr}
-              endDateStr={endDateStr}
-              setStartDateStr={setStartDateStr}
-              setEndDateStr={setEndDateStr}
-            />
+            <EventSelectCo dateList={dateList} setDateList={setDateList} />
           )}
           <TimeSelectWrapperUI>
             <p>시작 : </p>
@@ -317,7 +309,7 @@ const AddEditPlayScheduleModal = ({
   );
 };
 
-const AddEditPlayScheduleModalUI = tw.div`p-[50px] flex flex-col min-w-[350px] max-h-[100%] overflow-y-scroll gap-5 bg-white`;
+const AddEditPlayScheduleModalUI = tw.div`p-[30px] flex flex-col w-[450px] max-h-[100%] overflow-y-scroll gap-5 bg-white`;
 const PlayScheduleDataGroupUI = tw.div`flex flex-col gap-2`;
 const ExplainText = tw.p`text-[30px]`;
 const PlayScheduleBtnWrapperUI = tw.div`flex flex-row gap-2`;

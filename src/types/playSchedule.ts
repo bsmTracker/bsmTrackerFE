@@ -20,8 +20,7 @@ export type PlaySchedule = {
   playlistId: number;
   startMelodyId: number;
   ttsId: number;
-  startDate: string;
-  endDate: string;
+  dateList: DateEntity[];
   daysOfWeek: DaysOfWeek[];
   startTime: Time;
   endTime: Time;
@@ -44,25 +43,20 @@ export type PlayScheduleDto = {
   volume: number;
 } & PlayScheduleTimeDto;
 
-export type PlayScheduleTimeDto =
-  | {
-      scheduleType: ScheduleEnum;
-      startTime: Time;
-      endTime: Time;
-      startDate: string;
-      endDate: string;
-      daysOfWeek: DaysOfWeek[];
-    }
-  | {
-      scheduleType: ScheduleEnum;
-      startTime: Time;
-      endTime: Time;
-      startDate?: string;
-      endDate?: string;
-      daysOfWeek: DaysOfWeek[];
-    };
+export type PlayScheduleTimeDto = {
+  scheduleType: ScheduleEnum;
+  startTime: Time;
+  endTime: Time;
+  dateList?: DateEntity[];
+  daysOfWeek?: DaysOfWeek[];
+};
 
 export type DaysOfWeek = {
   playScheduleId: number;
   day: number;
+};
+
+export type DateEntity = {
+  playScheduleId: number;
+  date: string;
 };

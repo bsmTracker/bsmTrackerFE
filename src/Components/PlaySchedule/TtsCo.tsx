@@ -37,16 +37,16 @@ export const TTSCo = ({ setTTS, tts }: { setTTS: any; tts?: Tts | null }) => {
 
   return (
     <TtsCoUI>
-      tts :
+      2. tts
       {!tts && (
-        <ColUI>
+        <RowUI>
           <InputUI
             placeholder="이곳에 내용을 입력"
             value={content}
             onChange={(e: any) => setContent(e.target.value)}
           />
           <ButtonUI onClick={registerHandler}>등록</ButtonUI>
-        </ColUI>
+        </RowUI>
       )}
       {tts && (
         <TtsUI>
@@ -60,7 +60,7 @@ export const TTSCo = ({ setTTS, tts }: { setTTS: any; tts?: Tts | null }) => {
 };
 
 const TtsCoUI = tw.div`flex flex-row gap-2 items-center`;
-const ColUI = tw.div``;
+const RowUI = tw.div`flex flex-row`;
 const InputUI = tw.input`w-[300px] h-[40px] p-2 bg-[#F5F5F5]`;
 const ButtonUI = tw.button`bg-black text-white w-[40px] h-[40px]`;
 const TtsUI = tw.div` flex flex-row gap-2 bg-[#F5F5F5] p-3 items-center max-w-[400px] rounded-lg`;
