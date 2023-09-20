@@ -150,7 +150,7 @@ const AddEditPlayScheduleModal = ({
     }
 
     if (!scheduleData.name) {
-      toast("스케쥴 명을 입력하세요");
+      toast("스케줄 명을 입력하세요");
       return;
     }
     if (
@@ -242,7 +242,7 @@ const AddEditPlayScheduleModal = ({
     <ModalUI open={open} onClose={cancelHandler}>
       <AddEditPlayScheduleModalUI>
         <PlayScheduleDataGroupUI>
-          <ExplainText>스케쥴 명</ExplainText>
+          <ExplainText>스케줄 명</ExplainText>
           <InputUI
             placeholder="기상시간"
             onChange={(e) => setScheduleName(e.target.value)}
@@ -251,7 +251,7 @@ const AddEditPlayScheduleModal = ({
         </PlayScheduleDataGroupUI>
         <PlayScheduleDataGroupUI>
           <RowGapUI>
-            <ExplainText>스케쥴 시간</ExplainText>
+            <ExplainText>스케줄 시간</ExplainText>
             <select
               value={scheduleType}
               onChange={(e: any) => setScheduleType(Number(e.target.value))}

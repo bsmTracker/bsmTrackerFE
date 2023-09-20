@@ -3,6 +3,8 @@ import { usePlayScheduleListQuery } from "@/query/playSchedule";
 import { PlaySchedule, ScheduleEnum } from "@/types/playSchedule";
 import { useMemo, useState } from "react";
 import tw from "tailwind-styled-components";
+
+//
 const Calender = () => {
   const now = new Date();
   const nowYear = now.getFullYear();
@@ -30,10 +32,6 @@ const Calender = () => {
   }, [nowYear, month]);
 
   const 요일 = ["일", "월", "화", "수", "목", "금", "토"];
-  const 스케쥴타입 = {
-    [ScheduleEnum.EVENT]: "이벤트",
-    [ScheduleEnum.DAYS_OF_WEEK]: "요일형",
-  };
 
   if (playScheduleListQuery?.isLoading) return <div></div>;
 

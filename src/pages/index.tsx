@@ -1,5 +1,4 @@
 import { Header } from "@/Components/Header";
-import { Playlist } from "@/types/playlist";
 import { PlaySchedule } from "@/types/playSchedule";
 import { PlaylistCo } from "@/Components/Playlist/PlaylistCo";
 import { PlayScheduleCo } from "@/Components/PlaySchedule/PlayScheduleCo";

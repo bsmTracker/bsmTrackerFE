@@ -86,7 +86,7 @@ export const PlayScheduleCo = ({
         {schedule.playlist ? <a>{schedule.playlist.name}</a> : "없음"}
       </ContentUI>
       <ContentUI>설정볼륨 : {schedule.volume}%</ContentUI>
-      스케쥴 활성화 :{" "}
+      스케줄 활성화 :{" "}
       <Switch
         onClick={async () => {
           const targetStatus = !schedule.active;
