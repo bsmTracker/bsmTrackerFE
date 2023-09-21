@@ -43,12 +43,14 @@ export const MelodyCo = ({
           <DeleteIcon onClick={removeHandler} />
         </MelodyUI>
       )}
-      <HiddenInput
-        type="file"
-        accept="audio/mp3"
-        ref={inputRef}
-        onInput={uploadHandler}
-      />
+      {!melody && (
+        <HiddenInput
+          type="file"
+          accept="audio/mp3"
+          ref={inputRef}
+          onInput={async () => await uploadHandler()}
+        />
+      )}
     </MelodyCoUI>
   );
 };

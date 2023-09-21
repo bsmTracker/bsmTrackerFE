@@ -42,17 +42,9 @@ const TrackOptionCo = ({ track }: { track: Track }) => {
   return (
     <TrackOptionCoUI>
       {isPlaying ? (
-        <PauseIcon
-          onClick={() => {
-            setIsPlaying(false);
-          }}
-        />
+        <PauseIcon onClick={() => setIsPlaying(false)} />
       ) : (
-        <PlayIcon
-          onClick={() => {
-            setIsPlaying(true);
-          }}
-        />
+        <PlayIcon onClick={() => setIsPlaying(true)} />
       )}
       <DeleteIcon onClick={unsaveBtnHandler} />
     </TrackOptionCoUI>
