@@ -1,4 +1,4 @@
-import { CalendarIcon } from "@/Components/Icon/Calendar";
+import { BsCalendarFill } from "react-icons/bs";
 import { MenuButtonUI } from "./UI";
 import { useRouter } from "next/router";
 
@@ -10,7 +10,7 @@ const CalendarBtn = () => {
         router.push("calendar");
       }}
     >
-      <CalendarIcon />
+      <BsCalendarFill size={20} />
       <p>달력</p>
     </MenuButtonUI>
   );

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { usePlayerVolumeMutation } from "@/query/player";
-import { MenuButtonGroupUI, MenuButtonUI, MenuSubInfoUI } from "./UI";
-import { ListenIcon } from "@/Components/Icon/ListenIcon";
+import { MenuButtonUI, MenuSubInfoUI } from "./UI";
 import VolumeModal from "./Modal/volume";
 import { playerSocket } from "@/socket/player";
+import { BsVolumeUpFill } from "react-icons/bs";
 
 const VolumeBtn = () => {
   const [open, setOpen] = useState(false);
@@ -21,21 +21,21 @@ const VolumeBtn = () => {
   }, [playerSocket]);
 
   return (
-    <MenuButtonUI>
-      <MenuButtonGroupUI onClick={() => setOpen(!open)}>
-        <ListenIcon />
+    <>
+      <MenuButtonUI onClick={() => setOpen(!open)}>
+        <BsVolumeUpFill size={20} />
         <p>음량</p>
         <MenuSubInfoUI>({volume}%)</MenuSubInfoUI>
-      </MenuButtonGroupUI>
-      <VolumeModal
-        open={open}
-        close={() => setOpen(false)}
-        volume={volume}
-        setVolume={async (volume: number) => {
-          await playerVolumeMutation.mutateAsync(volume);
-        }}
-      />
-    </MenuButtonUI>
+        <VolumeModal
+          open={open}
+          close={() => setOpen(false)}
+          volume={volume}
+          setVolume={async (volume: number) => {
+            await playerVolumeMutation.mutateAsync(volume);
+          }}
+        />
+      </MenuButtonUI>
+    </>
   );
 };
 

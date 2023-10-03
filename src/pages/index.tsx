@@ -40,7 +40,6 @@ function Home() {
 
   return (
     <MainUI>
-      <Header />
       <Menu />
       <WrapperUI>
         <WrapperHeaderUI>
@@ -96,10 +95,10 @@ function Home() {
   );
 }
 
-const MainUI = tw.div`pb-[30px]`;
+const MainUI = tw.div`pb-[10px] z-300`;
 const WrapperUI = tw.div`flex flex-col pt-[30px] pl-[30px] gap-4`;
 const WrapperHeaderUI = tw.div`flex flex-row gap-6`;
 const WrapperTitleUI = tw.h1`text-[30px]`;
-const WrapperContentUI = tw.div`flex flex-row gap-4 overflow-x-scroll pr-[100px]`;
+const WrapperContentUI = tw.div`flex flex-row gap-4 overflow-x-scroll pr-[100px] py-[3px]`;
 
 export default Home;

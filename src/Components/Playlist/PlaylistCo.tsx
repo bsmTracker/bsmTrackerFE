@@ -14,7 +14,7 @@ export const PlaylistCo = ({ playlist }: { playlist: Playlist }) => {
   };
 
   return (
-    <PlaylistUI>
+    <PlaylistUI className="">
       <PlaylistNameUI>{playlist.name}</PlaylistNameUI>
       <PlaylistDetailUI>
         <ColUI>
@@ -30,7 +30,7 @@ export const PlaylistCo = ({ playlist }: { playlist: Playlist }) => {
 };
 
 const PlaylistUI = tw.div`
-bg-[#F5F5F5] p-[30px] min-w-[280px] cursor-pointer rounded-lg
+p-[30px] min-w-[280px] cursor-pointer rounded-lg bg-[#FBFAF9] shadow-lg
 `;
 
 const PlaylistNameUI = tw.p`text-[30px]`;

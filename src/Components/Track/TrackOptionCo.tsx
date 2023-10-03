@@ -51,6 +51,6 @@ const TrackOptionCo = ({ track }: { track: Track }) => {
   );
 };
 
-const TrackOptionCoUI = tw.div`p-3 flex flex-row gap-5`;
+const TrackOptionCoUI = tw.div`pr-[2px] flex flex-row gap-2 w-[60px]`;
 
 export default TrackOptionCo;

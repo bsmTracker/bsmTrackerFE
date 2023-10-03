@@ -1,14 +1,6 @@
-import Image from "next/image";
-
+import { RiDeleteBin6Line } from "react-icons/ri";
 export const DeleteIcon = ({ onClick }: { onClick?: any }) => {
   return (
-    <Image
-      alt="delete"
-      src={`${process.env.NEXT_PUBLIC_CLIENT_URL}/delete.svg`}
-      className="cursor-pointer"
-      width={30}
-      height={30}
-      onClick={onClick}
-    />
+    <RiDeleteBin6Line className="cursor-pointer" size={30} onClick={onClick} />
   );
 };

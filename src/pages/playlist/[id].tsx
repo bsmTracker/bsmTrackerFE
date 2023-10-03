@@ -1,6 +1,5 @@
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { Header } from "@/Components/Header";
 import { CreateIcon } from "@/Components/Icon/CreateIcon";
 import { DeleteIcon } from "@/Components/Icon/DeleteIcon";
 import { Track } from "@/types/track";
@@ -12,6 +11,7 @@ import {
 } from "@/query/playlist";
 import { useSortTrackMutation } from "@/query/track";
 import tw from "tailwind-styled-components";
+import { FcMusic } from "react-icons/fc";
 
 const PlaylistDetail = () => {
   const router = useRouter();
@@ -103,53 +103,58 @@ const PlaylistDetail = () => {
   };
 
   return (
-    <div>
-      <Header />
-      <PlaylistUI>
-        <PlaylistInfoUI>
-          <PlaylistInfoTextWrapperUI>
-            <PlaylistNameUI>{playlist?.name}</PlaylistNameUI>
-            <InfoTextUI>총 {playlist?.trackCount}개의 트랙</InfoTextUI>
-            <InfoTextUI>
-              총 {Math.floor((playlist?.duration_s ?? 0) / 60 ** 2)}시간{" "}
-              {Math.floor((playlist?.duration_s ?? 0) / 60)}분{" "}
-              {Math.floor((playlist?.duration_s ?? 0) % 60)}초
-            </InfoTextUI>
-          </PlaylistInfoTextWrapperUI>
-          <IconWrapperUI>
-            <CreateIcon onClick={() => setAddTrackModal(true)} />
-            <DeleteIcon onClick={deletBtnHandler} />
-          </IconWrapperUI>
-        </PlaylistInfoUI>
-        <PlaylistTrackListWrapperUI>
-          {playlist?.tracks?.map((track: Track, playlistIdx: number) => {
-            return (
-              <TrackCo
-                key={track.id}
-                draggable={true}
-                data-position={track.order}
-                {...draggObjectRef}
-                track={track}
-                order={playlistIdx + 1}
-              />
-            );
-          })}
-        </PlaylistTrackListWrapperUI>
-      </PlaylistUI>
+    <PlaylistUI>
+      <PlaylistInfoUI>
+        <PlaylistInfoTextWrapperUI>
+          <PlaylistNameUI>{playlist?.name}</PlaylistNameUI>
+          <InfoTextUI>총 {playlist?.trackCount}개의 트랙</InfoTextUI>
+          <InfoTextUI>
+            총 {Math.floor((playlist?.duration_s ?? 0) / 60 ** 2)}시간{" "}
+            {Math.floor((playlist?.duration_s ?? 0) / 60)}분{" "}
+            {Math.floor((playlist?.duration_s ?? 0) % 60)}초
+          </InfoTextUI>
+        </PlaylistInfoTextWrapperUI>
+        <IconWrapperUI>
+          <CreateIcon onClick={() => setAddTrackModal(true)} />
+          <DeleteIcon onClick={deletBtnHandler} />
+        </IconWrapperUI>
+      </PlaylistInfoUI>
+      <PlaylistTrackListWrapperUI>
+        {playlist?.tracks?.map((track: Track, playlistIdx: number) => {
+          return (
+            <TrackCo
+              key={track.id}
+              draggable={true}
+              data-position={track.order}
+              {...draggObjectRef}
+              track={track}
+              order={playlistIdx + 1}
+            />
+          );
+        })}
+      </PlaylistTrackListWrapperUI>
+      {playlist?.tracks?.length === 0 && (
+        <NoTracksUI>
+          <FcMusic size={100} />
+          <p>트랙을 어서 추가하세요!</p>
+        </NoTracksUI>
+      )}
       <SearchTrack
         open={addTrackModal}
         playlistId={playlistId}
         close={() => setAddTrackModal(false)}
       />
-    </div>
+    </PlaylistUI>
   );
 };
 
-const PlaylistUI = tw.div`p-[50px] mb-[100px]`;
+const PlaylistUI = tw.div`p-[40px]`;
 const PlaylistInfoUI = tw.div`flex flex-row justify-between items-center bg-white`;
 const PlaylistInfoTextWrapperUI = tw.div`flex flex-col justify-center`;
 const PlaylistNameUI = tw.p`text-[50px] font-bold`;
 const InfoTextUI = tw.p`text-[25px]`;
 const PlaylistTrackListWrapperUI = tw.div`mt-[40px] p-1`;
 const IconWrapperUI = tw.div`flex flex-col justify-between gap-3`;
+const NoTracksUI = tw.div`flex flex-col justify-center items-center gap-3 mt-[15px] text-[20px]`;
+
 export default PlaylistDetail;

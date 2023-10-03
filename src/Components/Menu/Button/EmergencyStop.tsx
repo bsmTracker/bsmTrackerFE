@@ -1,4 +1,4 @@
-import { StopIcon } from "@/Components/Icon/StopIcon";
+import { BsStopBtnFill } from "react-icons/bs";
 import { MenuButtonUI } from "./UI";
 import { useEmergencyStopPlayScheduleMutation } from "@/query/playSchedule";
 
@@ -14,7 +14,7 @@ const EmergencyStopBtn = () => {
         }
       }}
     >
-      <StopIcon />
+      <BsStopBtnFill size={20} />
       <p>긴급 정지</p>
     </MenuButtonUI>
   );

@@ -1,25 +1,25 @@
-import { usePlayerVolumeMutation } from "@/query/player";
 import { useLogoutMutation, useUserQuery } from "@/query/user";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
 
 export const Header = () => {
   const userQuery = useUserQuery();
   const logoutMutation = useLogoutMutation();
-  // const playerVolumeMutation = usePlayerVolumeMutation();
 
   const router = useRouter();
 
-  const logoutHandler = async () => {
+  const logInOrOutHandler = async () => {
     //로그아웃
-    await logoutMutation.mutateAsync();
-    router.reload();
+    if (userQuery?.data?.name) {
+      await logoutMutation.mutateAsync();
+    } else {
+      router.replace("/login");
+    }
   };
 
   return (
     <HeaderUI>
-      <RowUI>
+      <LogoRowUI>
         <LogoUI
           onClick={() => {
             location.replace("/");
@@ -28,19 +28,23 @@ export const Header = () => {
           BsmTracker
         </LogoUI>
         <SchoolNameUI>부산소마고</SchoolNameUI>
-      </RowUI>
+      </LogoRowUI>
       <ColUI>
-        <UserNameUI onClick={logoutHandler}>
-          {userQuery?.data?.name ?? "로그인하세요"}
-        </UserNameUI>
+        <UserNameUI>{userQuery?.data?.name ?? "no-user"}</UserNameUI>
+        <button
+          className="bg-black text-white px-2"
+          onClick={logInOrOutHandler}
+        >
+          {userQuery?.data?.name ? "로그아웃하기" : "로그인"}
+        </button>
       </ColUI>
     </HeaderUI>
   );
 };
 
-const HeaderUI = tw.div`bg-white flex justify-between w-full p-[30px] border-b-black  border-b-[1px]`;
-const RowUI = tw.div`flex flex-row`;
+const HeaderUI = tw.div` flex justify-between w-full p-[30px] border-b-black shadow-md fixed top-0 left-0 z-50 shadow-lg bg-white`;
+const LogoRowUI = tw.div`flex flex-col md:flex-row`;
 const ColUI = tw.div`flex flex-col gap-1 items-end w-[150px]`;
-const LogoUI = tw.div`text-black text-[40px] cursor-pointer font-bold`;
+const LogoUI = tw.p`text-black text-[30px] cursor-pointer font-bold flex flex-row sm:text-[40px]`;
 const SchoolNameUI = tw.p`font-bold`;
 const UserNameUI = tw.p`font-medium text-[25px]`;

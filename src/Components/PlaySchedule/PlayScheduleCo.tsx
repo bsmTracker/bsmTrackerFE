@@ -104,9 +104,9 @@ export const PlayScheduleCo = ({
   );
 };
 const PlayScheduleCoUI = tw.div`
-  p-[30px] cursor-pointer rounded-lg min-w-[280px]
+  p-[30px] cursor-pointer rounded-lg min-w-[280px] shadow-lg
   ${({ mark }: { mark: string }) =>
-    mark === "true" ? `bg-white border-black border-[2px]` : `bg-[#F5F5F5]`}
+    mark === "true" ? `bg-[#E6FEFC] border-black border-[1px]` : `bg-[#FBFAF9]`}
 `;
 
 const ContentUI = tw.p`text-[15px] font-bold`;

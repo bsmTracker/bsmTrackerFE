@@ -37,7 +37,6 @@ const Calender = () => {
 
   return (
     <div>
-      <Header />
       <ScheduleCalenderUI>
         <div className="flex flex-row">
           <h1 className="text-[40px] font-bold">
@@ -118,7 +117,7 @@ const Calender = () => {
   );
 };
 export default Calender;
-const ScheduleCalenderUI = tw.div`p-[50px] mb-[100px]`;
+const ScheduleCalenderUI = tw.div`p-[50px]`;
 const BlankSquareUI = tw.div`bg-none m-0 p-1 border-black border-[1px] bg-gray-200`;
 const DateSquareUI = tw.div`border-black border-[1px] h-[120px] bg-slate-200 m-0 p-1`;
 const DateTextUI = tw.p`text-[20px] font-bold text-black`;

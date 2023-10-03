@@ -15,14 +15,14 @@ const Login = () => {
   const onSubmit = async (data: UserLoginDto) => {
     await loginMutation.mutateAsync(data, {
       onSuccess: () => {
-        router.push("/");
+        console.log((router.query?.from as string) ?? "/");
+        router.push((router.query?.from as string) ?? "/");
       },
     });
   };
 
   return (
     <LoginUI onSubmit={handleSubmit(onSubmit)}>
-      <h1>BsmTracker Login하기</h1>
       <LoginInputUI
         type="email"
         placeholder="이메일"

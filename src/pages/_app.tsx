@@ -6,6 +6,9 @@ import { RecoilRoot } from "recoil";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "../axios";
+import { Header } from "@/Components/Header";
+import { USER_CACH_KEYS } from "@/query/queryKey";
+import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [queryClient] = useState(
@@ -17,6 +20,9 @@ export default function App({ Component, pageProps }: AppProps) {
       },
     })
   );
+  const [render, setRender] = useState<boolean>(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     const accessToken = localStorage.getItem("access_token");
@@ -24,13 +30,32 @@ export default function App({ Component, pageProps }: AppProps) {
     axios.defaults.headers.common["access_token"] = accessToken;
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      let canRender = false;
+      if (router.pathname !== "/login") {
+        console.log("Asdfghjkl");
+        const user = await queryClient.fetchQuery(USER_CACH_KEYS.userKey);
+        if (user) {
+          canRender = true;
+        }
+        if (!user) {
+          canRender = false;
+          router.replace("/login");
+        }
+      } else {
+        canRender = true;
+      }
+      setRender(canRender);
+    })();
+  }, [router.pathname]);
+
   return (
     <QueryClientProvider client={queryClient}>
       <RecoilRoot>
-        {/* <Router history={history}> */}
-        <Component {...pageProps} />
+        <Header />
+        {render && <Component {...pageProps} />}
         <ToastContainer />
-        {/* </Router> */}
       </RecoilRoot>
     </QueryClientProvider>
   );

@@ -1,12 +1,5 @@
-export const PauseIcon = ({ onClick }: { onClick?: any }) => {
-  return (
-    <img
-      alt="pause"
-      src={`${process.env.NEXT_PUBLIC_CLIENT_URL}/pause.png`}
-      className="cursor-pointer"
-      width={30}
-      height={30}
-      onClick={onClick}
-    />
-  );
-};
+import { BsPauseFill } from "react-icons/bs";
+
+export const PauseIcon = ({ onClick }: { onClick?: any }) => (
+  <BsPauseFill className="cursor-pointer" size={30} onClick={onClick} />
+);

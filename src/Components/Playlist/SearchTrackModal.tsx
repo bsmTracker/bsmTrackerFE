@@ -8,6 +8,7 @@ import { useSaveTrackMutation } from "@/query/track";
 import { LoadingCo } from "../global";
 import { ModalUI } from "../globalStyle";
 import { useQueryClient } from "react-query";
+import { FcSearch } from "react-icons/fc";
 import { PLAYLIST_CACHE_KEYS } from "@/query/queryKey";
 
 const SearchTrackModal = ({
@@ -19,63 +20,62 @@ const SearchTrackModal = ({
   open: boolean;
   close: any;
 }) => {
-  const [keyword, setKeyword] = useState<string>("");
-  const [keywordTimeout, setKeywordTimeout] = useState<any>(null);
-  const [selectedTrack, setSelectedTrack] = useState<SearchedTrackType | null>(
-    null
-  );
-  const saveTrackMutation = useSaveTrackMutation(playlistId);
-  const searchTrackQuery = useSearchTrackQuery(playlistId, keyword);
+  const Compo = () => {
+    const [keyword, setKeyword] = useState<string>("");
+    const [keywordTimeout, setKeywordTimeout] = useState<any>(null);
+    const [selectedTrack, setSelectedTrack] =
+      useState<SearchedTrackType | null>(null);
+    const saveTrackMutation = useSaveTrackMutation(playlistId);
+    const searchTrackQuery = useSearchTrackQuery(playlistId, keyword);
 
-  const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-  const searchedTracks = useMemo(() => {
-    if (searchTrackQuery.isLoading) return [];
-    return searchTrackQuery.data;
-  }, [searchTrackQuery.data, selectedTrack]);
+    const searchedTracks = useMemo(() => {
+      if (searchTrackQuery.isLoading) return [];
+      return searchTrackQuery.data;
+    }, [searchTrackQuery.data, selectedTrack]);
 
-  useEffect(() => {
-    const timeoutO = setTimeout(async () => {
-      setSelectedTrack(null);
-      await searchTrackQuery.refetch();
-    }, 500);
-    setKeywordTimeout(timeoutO);
-    return () => {
-      if (keywordTimeout) clearTimeout(keywordTimeout);
+    useEffect(() => {
+      const timeoutO = setTimeout(async () => {
+        setSelectedTrack(null);
+        await searchTrackQuery.refetch();
+      }, 500);
+      setKeywordTimeout(timeoutO);
+      return () => {
+        if (keywordTimeout) clearTimeout(keywordTimeout);
+      };
+    }, [keyword]);
+
+    const searchBtnHandler = () => searchTrackQuery.refetch();
+    const searchInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setKeyword(e.target.value);
     };
-  }, [keyword]);
+    const searchedTrackClickHandler = (searchedTrack: SearchedTrackType) => {
+      if (selectedTrack?.code === searchedTrack.code) {
+        setSelectedTrack(null);
+      } else {
+        setSelectedTrack(searchedTrack);
+      }
+    };
+    const saveSelectedTrackBtnHandler = async () => {
+      if (selectedTrack) {
+        await saveTrackMutation.mutateAsync(selectedTrack.code, {
+          onSuccess: async () => {
+            await queryClient.invalidateQueries(
+              PLAYLIST_CACHE_KEYS.searchKey(playlistId)
+            );
+          },
+        });
+      }
+    };
 
-  const searchBtnHandler = () => searchTrackQuery.refetch();
-  const searchInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setKeyword(e.target.value);
-  };
-  const searchedTrackClickHandler = (searchedTrack: SearchedTrackType) => {
-    if (selectedTrack?.code === searchedTrack.code) {
-      setSelectedTrack(null);
-    } else {
-      setSelectedTrack(searchedTrack);
-    }
-  };
-  const saveSelectedTrackBtnHandler = async () => {
-    if (selectedTrack) {
-      await saveTrackMutation.mutateAsync(selectedTrack.code, {
-        onSuccess: async () => {
-          await queryClient.invalidateQueries(
-            PLAYLIST_CACHE_KEYS.searchKey(playlistId)
-          );
-        },
-      });
-    }
-  };
+    const listenSelectedTrackBtnHandler = () => {
+      if (selectedTrack) {
+        window.open("https://youtube.com/watch?v=" + selectedTrack.code);
+      }
+    };
 
-  const listenSelectedTrackBtnHandler = () => {
-    if (selectedTrack) {
-      window.open("https://youtube.com/watch?v=" + selectedTrack.code);
-    }
-  };
-
-  return (
-    <ModalUI open={open} onClose={close}>
+    return (
       <SearchTrackUI>
         <ModalExplainText>트랙 추가</ModalExplainText>
         <SearchGroupUI>
@@ -88,20 +88,24 @@ const SearchTrackModal = ({
         </SearchGroupUI>
         {searchTrackQuery.isLoading && <p>로딩중</p>}
         <SearchedTrackScrollWrapperUI>
-          {searchedTracks?.map(
-            (searchedTrack: SearchedTrackType, idx: number) => {
-              const selectedStatus = selectedTrack?.code === searchedTrack.code;
-              return (
-                <SearchedTrack
-                  key={searchedTrack.code}
-                  searchedTrack={searchedTrack}
-                  selected={selectedStatus}
-                  onClick={() => {
-                    searchedTrackClickHandler(searchedTrack);
-                  }}
-                />
-              );
-            }
+          {searchedTracks?.map((searchedTrack: SearchedTrackType) => {
+            const selectedStatus = selectedTrack?.code === searchedTrack.code;
+            return (
+              <SearchedTrack
+                key={searchedTrack.code}
+                searchedTrack={searchedTrack}
+                selected={selectedStatus}
+                onClick={() => {
+                  searchedTrackClickHandler(searchedTrack);
+                }}
+              />
+            );
+          })}
+          {searchedTracks?.length === 0 && (
+            <NoSearchedUI>
+              <FcSearch size={100} />
+              <p>검색결과가 없네요..</p>
+            </NoSearchedUI>
           )}
         </SearchedTrackScrollWrapperUI>
         <SearchedTrackBtnGroupUI>
@@ -119,6 +123,12 @@ const SearchTrackModal = ({
         </SearchedTrackBtnGroupUI>
         <LoadingCo isLoading={saveTrackMutation.isLoading} />
       </SearchTrackUI>
+    );
+  };
+
+  return (
+    <ModalUI open={open} onClose={close}>
+      <Compo />
     </ModalUI>
   );
 };
@@ -131,5 +141,6 @@ const SearchBtnUI = tw.button`w-[50px] h-full bg-black text-white`;
 const SearchedTrackScrollWrapperUI = tw.div`overflow-y-scroll h-[300px] py-[5px] my-[30px] flex flex-col gap-3`;
 const SearchedTrackBtnGroupUI = tw.div`flex flex-row gap-2 items-center justify-center`;
 const SearchedTrackBtnUI = tw.button`bg-black text-white w-[100px] h-[40px]`;
+const NoSearchedUI = tw.div`flex flex-col justify-center items-center h-full gap-3 text-[20px]`;
 
 export default SearchTrackModal;

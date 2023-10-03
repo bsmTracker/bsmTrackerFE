@@ -1,14 +1,6 @@
 import Image from "next/image";
+import { CgAddR } from "react-icons/cg";
 
-export const CreateIcon = ({ onClick }: { onClick?: any }) => {
-  return (
-    <Image
-      alt="add"
-      src={`${process.env.NEXT_PUBLIC_CLIENT_URL}/add.svg`}
-      className="cursor-pointer"
-      width={30}
-      height={30}
-      onClick={onClick}
-    />
-  );
-};
+export const CreateIcon = ({ onClick }: { onClick?: any }) => (
+  <CgAddR className="cursor-pointer" size={30} onClick={onClick} />
+);

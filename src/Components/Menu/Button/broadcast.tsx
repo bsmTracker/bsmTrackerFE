@@ -1,5 +1,5 @@
-import { MicIcon } from "@/Components/Icon/Mic";
-import { MenuButtonGroupUI, MenuButtonUI } from "./UI";
+import { BsChatDotsFill } from "react-icons/bs";
+import { MenuButtonUI } from "./UI";
 import { useState } from "react";
 import BroadcastModal from "./Modal/broadcast";
 
@@ -7,13 +7,13 @@ const BroadcastBtn = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <MenuButtonUI>
-      <MenuButtonGroupUI onClick={() => setOpen(!open)}>
-        <MicIcon />
+    <>
+      <MenuButtonUI onClick={() => setOpen(!open)}>
+        <BsChatDotsFill size={20} />
         <p>실시간 tts</p>
-      </MenuButtonGroupUI>
+      </MenuButtonUI>
       <BroadcastModal open={open} close={() => setOpen(false)} />
-    </MenuButtonUI>
+    </>
   );
 };
 

@@ -1,4 +1,4 @@
-import { ListenIcon } from "@/Components/Icon/ListenIcon";
+import { BsSpeakerFill } from "react-icons/bs";
 import { MenuButtonUI } from "./UI";
 
 const MornitoringBtn = () => {
@@ -8,7 +8,7 @@ const MornitoringBtn = () => {
         window.open(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/player`)
       }
     >
-      <ListenIcon />
+      <BsSpeakerFill size={20} />
       <p>송출모니터링</p>
     </MenuButtonUI>
   );

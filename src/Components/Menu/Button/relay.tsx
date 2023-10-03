@@ -1,8 +1,8 @@
-import { ElectricityIcon } from "@/Components/Icon/Electricity";
 import { MenuButtonUI, MenuSubInfoUI } from "./UI";
 import { speakerSocket } from "@/socket/speaker";
 import { useEffect, useState } from "react";
 import tw from "tailwind-styled-components";
+import { BsLightningFill } from "react-icons/bs";
 
 const RelayBtn = () => {
   const [relayStatus, setRelayStatus] = useState(false);
@@ -20,7 +20,7 @@ const RelayBtn = () => {
 
   return (
     <MenuButtonUI>
-      <ElectricityIcon />
+      <BsLightningFill size={20} />
       <p>릴레이 {relayStatus ? "켜짐" : "꺼짐"}</p>
       <RelayColor status={relayStatus} />
     </MenuButtonUI>

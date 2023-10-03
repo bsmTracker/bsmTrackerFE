@@ -1,14 +1,6 @@
 import Image from "next/image";
+import { BsPlayFill } from "react-icons/bs";
 
 export const PlayIcon = ({ onClick }: { onClick?: any }) => {
-  return (
-    <img
-      alt="play"
-      src={`${process.env.NEXT_PUBLIC_CLIENT_URL}/play.png`}
-      className="cursor-pointer"
-      width={30}
-      height={30}
-      onClick={onClick}
-    />
-  );
+  return <BsPlayFill className="cursor-pointer" size={30} onClick={onClick} />;
 };
