@@ -106,6 +106,8 @@ const AddEditPlayScheduleModal = ({
       setPlaylist(null);
       setVolume(25);
     }
+    setTtsHistory(null);
+    setMelodyHistory(null);
   }, [open, type, playSchedule]);
 
   const preventClose = async (e: BeforeUnloadEvent) => {

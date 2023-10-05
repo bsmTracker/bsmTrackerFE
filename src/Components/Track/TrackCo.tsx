@@ -37,16 +37,16 @@ const TrackCo = (props: Props) => {
 
 const TrackCoUI = tw.div`
 flex flex-row justify-between h-[90px] max-h-[160px] w-full items-center
-bg-slate-50 px-[10px] gap-3 my-[5px] rounded-lg
+bg-slate-50 px-[10px] rounded-lg
 `;
 
 const TrackInfoCoUI = tw.div`
 flex flex-row items-center gap-5
 `;
 const ColUI = tw.div``;
-const TrackNameUI = tw.p`font-bold line-clamp-2 text-ellipsis text-[10px] sm:text-[12px] md:text-[14px] lg:text-[16px] overflow-hidden ...`;
-const TrackDetailTextUI = tw.p`text-[1vw]`;
-const TrackImgUI = tw.img`hidden sm:flex w-[150px] object-cover`;
+const TrackNameUI = tw.p`font-bold line-clamp-2 text-ellipsis text-[14px] sm:text-[15px] md:text-[16px] lg:text-[17px] overflow-hidden ...`;
+const TrackDetailTextUI = tw.p`t text-[8px] sm:text-[8px] md:text-[10px] lg:text-[12px]`;
+const TrackImgUI = tw.img`hidden sm:flex w-[150px] object-cover h-[90px]`;
 
 const OrderUI = tw.p`font-bold text-[25px] text-gray-600`;
 

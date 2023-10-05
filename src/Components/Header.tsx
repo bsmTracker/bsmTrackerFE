@@ -31,12 +31,9 @@ export const Header = () => {
       </LogoRowUI>
       <ColUI>
         <UserNameUI>{userQuery?.data?.name ?? "no-user"}</UserNameUI>
-        <button
-          className="bg-black text-white px-2"
-          onClick={logInOrOutHandler}
-        >
-          {userQuery?.data?.name ? "로그아웃하기" : "로그인"}
-        </button>
+        <LoginInOrOutBtn onClick={logInOrOutHandler}>
+          {userQuery?.data?.name ? "로그아웃" : "로그인"}
+        </LoginInOrOutBtn>
       </ColUI>
     </HeaderUI>
   );
@@ -47,4 +44,5 @@ const LogoRowUI = tw.div`flex flex-col md:flex-row`;
 const ColUI = tw.div`flex flex-col gap-1 items-end w-[150px]`;
 const LogoUI = tw.p`text-black text-[30px] cursor-pointer font-bold flex flex-row sm:text-[40px]`;
 const SchoolNameUI = tw.p`font-bold`;
-const UserNameUI = tw.p`font-medium text-[25px]`;
+const UserNameUI = tw.p`font-medium text-[18px] lg:text-[25px] md:text-[20px] sm:text-[18px]`;
+const LoginInOrOutBtn = tw.button`bg-black text-white px-2 rounded-lg text-[16px]`;

@@ -1,4 +1,3 @@
-import { Header } from "@/Components/Header";
 import { PlaySchedule } from "@/types/playSchedule";
 import { PlaylistCo } from "@/Components/Playlist/PlaylistCo";
 import { PlayScheduleCo } from "@/Components/PlaySchedule/PlayScheduleCo";

@@ -148,12 +148,12 @@ const PlaylistDetail = () => {
   );
 };
 
-const PlaylistUI = tw.div`p-[40px]`;
+const PlaylistUI = tw.div`p-[20px] sm:px-[20px] md:px-[30px] lg:px-[40px]`;
 const PlaylistInfoUI = tw.div`flex flex-row justify-between items-center bg-white`;
 const PlaylistInfoTextWrapperUI = tw.div`flex flex-col justify-center`;
 const PlaylistNameUI = tw.p`text-[50px] font-bold`;
 const InfoTextUI = tw.p`text-[25px]`;
-const PlaylistTrackListWrapperUI = tw.div`mt-[40px] p-1`;
+const PlaylistTrackListWrapperUI = tw.div`flex flex-col mt-[40px] p-1 gap-3`;
 const IconWrapperUI = tw.div`flex flex-col justify-between gap-3`;
 const NoTracksUI = tw.div`flex flex-col justify-center items-center gap-3 mt-[15px] text-[20px]`;
 
