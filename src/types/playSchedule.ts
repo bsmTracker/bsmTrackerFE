@@ -17,9 +17,6 @@ export type PlaySchedule = {
   id: number;
   name: string;
   scheduleType: ScheduleEnum;
-  playlistId: number;
-  startMelodyId: number;
-  ttsId: number;
   dateList: DateEntity[];
   daysOfWeek: DaysOfWeek[];
   startTime: Time;
@@ -52,11 +49,9 @@ export type PlayScheduleTimeDto = {
 };
 
 export type DaysOfWeek = {
-  playScheduleId: number;
   day: number;
 };
 
 export type DateEntity = {
-  playScheduleId: number;
   date: string;
 };

@@ -1,8 +1,10 @@
 import { Audio } from "./audio";
+import { Playlist } from "./playlist";
 
 export type Track = {
   id: number;
   playlistId: number;
+  playlist: Playlist;
   code: string;
   order: number;
   name: string;

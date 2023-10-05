@@ -7,7 +7,7 @@ import { DeleteIcon } from "../Icon/DeleteIcon";
 import { useUnSaveTrackMutation } from "@/query/track";
 
 const TrackOptionCo = ({ track }: { track: Track }) => {
-  const unSaveTrackMutation = useUnSaveTrackMutation(track.playlistId);
+  const unSaveTrackMutation = useUnSaveTrackMutation(track.playlist.id);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playingAudio, setPlayingAudio] = useState<any>(null);
 
@@ -36,7 +36,7 @@ const TrackOptionCo = ({ track }: { track: Track }) => {
   }, [isPlaying, playingAudio]);
 
   const unsaveBtnHandler = async () => {
-    unSaveTrackMutation.mutateAsync(track.code);
+    await unSaveTrackMutation.mutateAsync(track.code);
   };
 
   return (
