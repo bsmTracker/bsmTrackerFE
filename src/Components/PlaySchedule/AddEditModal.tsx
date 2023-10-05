@@ -217,7 +217,7 @@ const AddEditPlayScheduleModal = ({
     if (ttsHistory) {
       await removeTtsMutation.mutateAsync(ttsHistory.id);
     }
-    if (ttsData !== null && ttsData.id !== playSchedule?.tts.id) {
+    if (ttsData !== null && ttsData.id !== playSchedule?.tts?.id) {
       setTtsHistory(ttsData);
     }
     if (ttsData === null) {
@@ -230,7 +230,10 @@ const AddEditPlayScheduleModal = ({
     if (melodyHistory) {
       await removeMelodyMutation.mutateAsync(melodyHistory.id);
     }
-    if (melodyData !== null && melodyData.id !== playSchedule?.startMelody.id) {
+    if (
+      melodyData !== null &&
+      melodyData.id !== playSchedule?.startMelody?.id
+    ) {
       setMelodyHistory(melodyData);
     }
     if (melodyData === null) {
